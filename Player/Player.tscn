@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://dinm0s6sgjc3f"]
+
+[ext_resource type="Texture2D" uid="uid://cm8vru0mn7y3p" path="res://assets/shipPlayerIso.png" id="2_wsaim"]
+
+[sub_resource type="Curve2D" id="Curve2D_igo17"]
+
+[node name="Player" type="Path2D"]
+curve = SubResource("Curve2D_igo17")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="PathFollow2D"]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_wsaim")
+hframes = 4

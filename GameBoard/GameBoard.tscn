@@ -1,0 +1,22 @@
+[gd_scene load_steps=2 format=3 uid="uid://vp83ufced2kv"]
+
+[sub_resource type="Curve2D" id="Curve2D_igo17"]
+
+[node name="GameBoard" type="Node2D"]
+
+[node name="UnitOverlay" type="TileMap" parent="."]
+format = 2
+
+[node name="UnitPath" type="TileMap" parent="."]
+format = 2
+
+[node name="Player" type="Path2D" parent="."]
+curve = SubResource("Curve2D_igo17")
+
+[node name="Enemies" type="Node2D" parent="."]
+
+[node name="Sharks" type="Node2D" parent="Enemies"]
+
+[node name="Pirates" type="Node2D" parent="Enemies"]
+
+[node name="Islands" type="Node2D" parent="Enemies"]

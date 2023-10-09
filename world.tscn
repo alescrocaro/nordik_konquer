@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://tmjt5ytuo4dy"]
+
+[ext_resource type="PackedScene" uid="uid://d1mfomqp1sk7t" path="res://Map/Map.tscn" id="1_a88kt"]
+[ext_resource type="PackedScene" uid="uid://dinm0s6sgjc3f" path="res://Player/Player.tscn" id="2_3qric"]
+
+[node name="World" type="Node2D"]
+
+[node name="Map" parent="." instance=ExtResource("1_a88kt")]
+
+[node name="GameBoard" type="Node2D" parent="."]
+
+[node name="UnitOverlay" type="TileMap" parent="GameBoard"]
+format = 2
+
+[node name="UnitPath" type="TileMap" parent="GameBoard"]
+format = 2
+
+[node name="Player" parent="GameBoard" instance=ExtResource("2_3qric")]
+
+[node name="Enemies" type="Node2D" parent="GameBoard"]
+
+[node name="Sharks" type="Node2D" parent="GameBoard/Enemies"]
+
+[node name="Pirates" type="Node2D" parent="GameBoard/Enemies"]
+
+[node name="Islands" type="Node2D" parent="GameBoard/Enemies"]

@@ -6,21 +6,15 @@
 [node name="World" type="Node2D"]
 
 [node name="Map" parent="." instance=ExtResource("1_a88kt")]
+layer_0/tile_data = PackedInt32Array()
+layer_1/z_index = 0
 
-[node name="GameBoard" type="Node2D" parent="."]
+[node name="Player" parent="." instance=ExtResource("2_3qric")]
 
-[node name="UnitOverlay" type="TileMap" parent="GameBoard"]
-format = 2
+[node name="Enemies" type="Node2D" parent="."]
 
-[node name="UnitPath" type="TileMap" parent="GameBoard"]
-format = 2
+[node name="Sharks" type="Node2D" parent="Enemies"]
 
-[node name="Player" parent="GameBoard" instance=ExtResource("2_3qric")]
+[node name="Pirates" type="Node2D" parent="Enemies"]
 
-[node name="Enemies" type="Node2D" parent="GameBoard"]
-
-[node name="Sharks" type="Node2D" parent="GameBoard/Enemies"]
-
-[node name="Pirates" type="Node2D" parent="GameBoard/Enemies"]
-
-[node name="Islands" type="Node2D" parent="GameBoard/Enemies"]
+[node name="Islands" type="Node2D" parent="Enemies"]

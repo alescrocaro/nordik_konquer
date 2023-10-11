@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://tmjt5ytuo4dy"]
+[gd_scene load_steps=21 format=3 uid="uid://tmjt5ytuo4dy"]
 
 [ext_resource type="PackedScene" uid="uid://d1mfomqp1sk7t" path="res://Map/Map.tscn" id="1_a88kt"]
 [ext_resource type="PackedScene" uid="uid://dinm0s6sgjc3f" path="res://Player/Player.tscn" id="2_3qric"]
@@ -9,6 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://b6clclg03sj5l" path="res://assets/card_turn_to_left.png" id="6_hhyxh"]
 [ext_resource type="Script" path="res://ButtonTurnLeft.gd" id="8_3mxcp"]
 [ext_resource type="Script" path="res://FPS.gd" id="9_seopv"]
+[ext_resource type="Script" path="res://Button.gd" id="11_l4qmh"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_do0vj"]
 font = ExtResource("3_5dxoa")
@@ -98,8 +99,9 @@ anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -231.13
-offset_bottom = -139.129
+offset_top = -230.0
+offset_right = -1152.0
+offset_bottom = -138.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(2.5, 2.5)
@@ -140,9 +142,19 @@ icon = ExtResource("6_hhyxh")
 script = ExtResource("8_3mxcp")
 
 [node name="FPS" type="Label" parent="CanvasLayer/HudManager"]
+layout_mode = 0
 offset_left = 1831.0
 offset_top = 32.0
 offset_right = 1871.0
 offset_bottom = 58.0
 label_settings = SubResource("LabelSettings_f7frl")
 script = ExtResource("9_seopv")
+
+[node name="Button" type="Button" parent="CanvasLayer/HudManager"]
+layout_mode = 0
+offset_left = 1829.0
+offset_top = 104.0
+offset_right = 1889.0
+offset_bottom = 135.0
+text = "Fechar"
+script = ExtResource("11_l4qmh")

@@ -10,7 +10,7 @@ var currentTile
 
 func _ready():
 	while true:
-		currentTile = $"../Map".getRandomPosition()
+		currentTile = $"../Map".getRandomTile()
 		if currentTile.type == 'Ocean':
 			self.global_position = Vector2i($"../Map".getGlobalPosition(currentTile.position)) + Vector2i(1, -12)
 			tileMapDict[str(currentTile.position)].isPlayerAt = true

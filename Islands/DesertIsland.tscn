@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://iw3v6ww7yr51"]
+
+[ext_resource type="Texture2D" uid="uid://ds5xhp7j3kdle" path="res://assets/desert_island_32x32.png" id="1_02q2v"]
+
+[node name="DesertIsland" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_02q2v")

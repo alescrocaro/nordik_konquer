@@ -16,13 +16,10 @@ func _ready():
 	for x in gridSize:
 		for y in gridSize:
 			set_cell(0, Vector2i(x, y), 0, Vector2i(0, 0), 0)
-			tileMapDict[str(Vector2i(x, y))] = { "type": "Ocean", "position": Vector2i(x, y), "isPlayerAt": false }
+			tileMapDict[str(Vector2i(x, y))] = { "type": "Ocean", "gridPosition": Vector2i(x, y), "globalPosition": getGlobalPosition(Vector2i(x, y)), "isPlayerAt": false }
 	
-	generateDesertIslands()
-	
-	generateEnemyIslands()
 
-func _process(delta):
+func _process(_delta):
 	selectedGridPosition = getGridPosition(get_global_mouse_position() + Vector2(0, 8)) # Used "+ Vector2(0, 8)" because the map is isometric, so the selection area is different for the tilemap
 	selectedGlobalPosition = getGlobalPosition(selectedGridPosition)
 		
@@ -32,75 +29,51 @@ func _process(delta):
 		!selectedGridPosition.y < 0 &&
 		!selectedGridPosition.y > gridSize-1
 	):
-		#print(selectedGridPosition)
 		for x in gridSize:
 			for y in gridSize:
 				erase_cell(1, Vector2i(x,y))
 		
 		if Player.canSelectPosition():
-			print('true')
 			set_cell(1, selectedGridPosition, 1, Vector2i(0, 0), 0)
-
+#end func _process 
 
 func getRandomTile():
 	return tileMapDict[ str(tileMapDict.keys()[ randi() % tileMapDict.size() ] ) ]
 	
-func getGridPosition(position: Vector2i):
-	return local_to_map(position)
+func getGridPosition(globalPosition: Vector2i):
+	return local_to_map(globalPosition)
 	
-func getTile(position: Vector2i):
-	return tileMapDict[ str(position) ]
+func getTile(gridPosition: Vector2i):
+	return tileMapDict[ str(gridPosition) ]
 
-func getGlobalPosition(position: Vector2i):
-	return map_to_local(position)
+func getGlobalPosition(gridPosition: Vector2i):
+	return map_to_local(gridPosition)
 
 func isNear(tilesAmount: int, tileType: String, tile) -> bool:
 	for x in range(tilesAmount):
 		for y in range(tilesAmount):
-			if (
-				tileMapDict.has( str(tile.position - Vector2i(x,y)) ) && (
-					tileMapDict[ str(tile.position - Vector2i(x,y)) ].type == tileType
-				)
-			):
-				return true
+			if (tileMapDict.has( str(tile.gridPosition + Vector2i(x,y)) ) ): 
+				if (tileMapDict[ str(tile.gridPosition + Vector2i(x,y)) ].type == tileType):
+					return true
+				#end if
+			#end if
+			if (tileMapDict.has( str(tile.gridPosition + Vector2i(-x,-y)) ) ): 
+				if (tileMapDict[ str(tile.gridPosition + Vector2i(-x,-y)) ].type == tileType):
+					return true
+				#end if
+			#end if
+			if (tileMapDict.has( str(tile.gridPosition + Vector2i(x,-y)) ) ): 
+				if (tileMapDict[ str(tile.gridPosition + Vector2i(x,-y)) ].type == tileType):
+					return true
+				#end if
+			#end if
+			if (tileMapDict.has( str(tile.gridPosition + Vector2i(-x,y)) ) ): 
+				if (tileMapDict[ str(tile.gridPosition + Vector2i(-x,y)) ].type == tileType):
+					return true
+				#end if
 			#end if
 		#end for y
 	#end for x
+
 	return false
-
-func generateDesertIslands() -> void:
-	var desertIslandCount: int = 0
-	var desertIslandCountIterations: int = 0
-
-	while true:
-		if desertIslandCount >= desertIslandAmount:
-			break
-
-		var desertIslandTile = getRandomTile()
-
-		if (isNear(5, 'DesertIsland', desertIslandTile) && desertIslandCountIterations < 3 * desertIslandAmount):
-			return
-
-		if desertIslandTile.type == 'Ocean':
-			desertIslandCount += 1
-			set_cell(2, desertIslandTile.position, 2, Vector2i(0, 0), 0)
-			desertIslandTile.type = "DesertIsland"
-
-func generateEnemyIslands() -> void:
-	var enemyIslandCount: int = 0
-	var enemyIslandCountIterations: int = 0
-
-	while true:
-		if enemyIslandCount >= enemyIslandAmount:
-			break
-
-		var enemyIslandTile = getRandomTile()
-
-		if (isNear(6, 'EnemyIsland', enemyIslandTile) && enemyIslandCountIterations < 3 * enemyIslandAmount):
-			return
-
-		if enemyIslandTile.type == 'Ocean':
-			enemyIslandCount += 1
-			set_cell(2, enemyIslandTile.position, 3, Vector2i(0, 0), 0)
-			enemyIslandTile.type = "EnemyIsland"
-
+#end func isNear

@@ -1,79 +1,96 @@
 class_name Player
 extends Node2D
 
-@onready var tileMapDict = $"../Map".tileMapDict
+
+######### VARS #########
+@onready var Map = $"../Map"
 @onready var playerSprite: Sprite2D = $"playerSprite"
 
 var currentTile
 
 
 
+######### FUNCS #########
 func _ready():
 	while true:
 		currentTile = $"../Map".getRandomTile()
 		if currentTile.type == 'Ocean':
-			self.global_position = Vector2i($"../Map".getGlobalPosition(currentTile.position)) + Vector2i(1, -12)
-			tileMapDict[str(currentTile.position)].isPlayerAt = true
+			self.global_position = Vector2i($"../Map".getGlobalPosition(currentTile.gridPosition)) + Vector2i(1, -12)
+			Map.tileMapDict[str(currentTile.gridPosition)].isPlayerAt = true
 			playerSprite.set_frame(randi() % 4)
 			break
+		#end if
+	#end while
 
 	#print(tileMapDict[ str(tileMapDict.keys()[ randi() % tileMapDict.size() ] ) ] )
-
+#end func _ready
 
 func _process(_delta):
 	moveByMouseClick()
+#end func _process
 
 
 func moveByMouseClick() -> void:
 	if Input.is_action_just_pressed('mouse_left') && canSelectPosition():
-		self.global_position = Vector2i($"../Map".selectedGlobalPosition) + Vector2i(1, -12)
+		self.global_position = Vector2i(Map.selectedGlobalPosition) + Vector2i(1, -12)
 		currentTile = updatePosition(currentTile)
+	#end if
+#end func moveByMouseClick
 
 
-func updatePosition(currentTile):
-	var selectedGridTile = $"../Map".getTile($"../Map".selectedGridPosition)
-	tileMapDict[ str( currentTile.position ) ].isPlayerAt = false
-	tileMapDict[ str( selectedGridTile.position ) ].isPlayerAt = true
-	changeFrame(currentTile, selectedGridTile)
-	print(currentTile.position, '->', selectedGridTile.position )
+func updatePosition(tile):
+	Map.tileMapDict[ str( tile.gridPosition ) ].isPlayerAt = false
+	
+	var selectedGridTile = Map.tileMapDict[ str(Map.selectedGridPosition) ]
+	Map.tileMapDict[ str( selectedGridTile.gridPosition ) ].isPlayerAt = true
+	
+	changeFrame(tile, selectedGridTile)
 	currentTile = selectedGridTile
-	return currentTile
+
+	return selectedGridTile
+#end func updatePosition
 
 
-func changeFrame(currentTile, newTile) -> void:
-	print('changeFrame')
-	if currentTile.position - newTile.position == Vector2i(0, -1):
+func changeFrame(tile, newTile) -> void:
+	if tile.gridPosition - newTile.gridPosition == Vector2i(0, -1):
 		playerSprite.set_frame(0)
-	elif currentTile.position - newTile.position == Vector2i(-1, 0):
+	elif tile.gridPosition - newTile.gridPosition == Vector2i(-1, 0):
 		playerSprite.set_frame(1)
-	elif currentTile.position - newTile.position == Vector2i(0, 1):
+	elif tile.gridPosition - newTile.gridPosition == Vector2i(0, 1):
 		playerSprite.set_frame(2)
-	elif currentTile.position - newTile.position == Vector2i(1, 0):
+	elif tile.gridPosition - newTile.gridPosition == Vector2i(1, 0):
 		playerSprite.set_frame(3)
+	#end elifs
+#end func changeFrame
 
 
 
 func canSelectPosition():
-	if tileMapDict.has( str($"../Map".selectedGridPosition) ):
-		var tile = $"../Map".getTile($"../Map".selectedGridPosition)
-		if (
-			tileMapDict.has( str(tile.position - Vector2i(-1,0)) ) && (
-				tileMapDict[ str(tile.position - Vector2i(-1,0)) ].isPlayerAt &&
-				playerSprite.get_frame() == 3
-			) ||
-			tileMapDict.has( str(tile.position - Vector2i(1,0)) ) && (
-				tileMapDict[ str(tile.position - Vector2i(1,0)) ].isPlayerAt &&
-				playerSprite.get_frame() == 1
-			) ||
-			tileMapDict.has( str(tile.position - Vector2i(0,-1)) ) && (
-				tileMapDict[ str(tile.position - Vector2i(0,-1)) ].isPlayerAt &&
-				playerSprite.get_frame() == 2
-			) ||
-			tileMapDict.has( str(tile.position - Vector2i(0,1)) ) && (
-				tileMapDict[ str(tile.position - Vector2i(0,1)) ].isPlayerAt &&
-				playerSprite.get_frame() == 0
-			)
-		):
-			return true
+	if Map.tileMapDict.has( str(Map.selectedGridPosition) ):
+		var tile = Map.tileMapDict[ str(Map.selectedGridPosition) ]
+		if (Map.tileMapDict[ str(tile.gridPosition) ].type == 'Ocean'):
+			if (
+				Map.tileMapDict.has( str(tile.gridPosition - Vector2i(0,1)) ) && (
+					Map.tileMapDict[ str(tile.gridPosition - Vector2i(0,1)) ].isPlayerAt &&
+					playerSprite.get_frame() == 0
+				) ||
+				Map.tileMapDict.has( str(tile.gridPosition - Vector2i(1,0)) ) && (
+					Map.tileMapDict[ str(tile.gridPosition - Vector2i(1,0)) ].isPlayerAt &&
+					playerSprite.get_frame() == 1
+				) ||
+				Map.tileMapDict.has( str(tile.gridPosition - Vector2i(0,-1)) ) && (
+					Map.tileMapDict[ str(tile.gridPosition - Vector2i(0,-1)) ].isPlayerAt &&
+					playerSprite.get_frame() == 2
+				) || 
+				Map.tileMapDict.has( str(tile.gridPosition - Vector2i(-1,0)) ) && (
+					Map.tileMapDict[ str(tile.gridPosition - Vector2i(-1,0)) ].isPlayerAt &&
+					playerSprite.get_frame() == 3
+				) 
+			):
+				return true
+			#end if
+		#end if
+	#end if
 
 	return false
+#end func canSelectPosition

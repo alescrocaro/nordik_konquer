@@ -1,6 +1,6 @@
 extends Node2D
 
-@onready var Map = $"./Map"
+@onready var Map = $"Map"
 @onready var DesertIsland = preload("res://Islands/DesertIsland.tscn")
 @onready var EnemyIsland = preload("res://Islands/EnemyIsland.tscn")
 
@@ -11,11 +11,12 @@ extends Node2D
 func _ready():
 	generateDesertIslands()
 	generateEnemyIslands()
-
+#end func _ready
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(_delta):
 #	pass
+#end func _process
 
 func generateDesertIslands() -> void:
 	var desertIslandCount: int = 0
@@ -76,4 +77,6 @@ func generateEnemyIslands() -> void:
 			enemyIslandInstance.position = enemyIslandTile.globalPosition
 
 			get_node('./Islands').add_child(enemyIslandInstance)
+		#end if
+	#end while
 #end func generateEnemyIslands

@@ -1,10 +1,11 @@
-[gd_scene load_steps=11 format=3 uid="uid://d1mfomqp1sk7t"]
+[gd_scene load_steps=13 format=3 uid="uid://d1mfomqp1sk7t"]
 
 [ext_resource type="Texture2D" uid="uid://c12s3oqo883qf" path="res://assets/water.png" id="1_5rfn0"]
 [ext_resource type="Texture2D" uid="uid://bybykmt7h3th4" path="res://assets/selectionTile.png" id="2_rdjwv"]
 [ext_resource type="Script" path="res://Map/Map.gd" id="3_3r1xx"]
 [ext_resource type="Texture2D" uid="uid://ds5xhp7j3kdle" path="res://assets/desert_island_32x32.png" id="3_u4475"]
 [ext_resource type="Texture2D" uid="uid://b35fn1neaqslq" path="res://assets/enemy_island_32x32.png" id="4_7kycx"]
+[ext_resource type="Texture2D" uid="uid://6pktatg1d8sa" path="res://assets/atackSelectionTile.png" id="5_f7ugl"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7qdwv"]
 texture = ExtResource("1_5rfn0")
@@ -26,6 +27,11 @@ texture = ExtResource("4_7kycx")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_dum88"]
+texture = ExtResource("5_f7ugl")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
 [sub_resource type="TileSet" id="TileSet_xlrs8"]
 tile_shape = 1
 tile_layout = 4
@@ -35,6 +41,7 @@ sources/0 = SubResource("TileSetAtlasSource_7qdwv")
 sources/1 = SubResource("TileSetAtlasSource_f705h")
 sources/2 = SubResource("TileSetAtlasSource_b87mi")
 sources/3 = SubResource("TileSetAtlasSource_qboss")
+sources/4 = SubResource("TileSetAtlasSource_dum88")
 
 [node name="TileMap" type="TileMap"]
 y_sort_enabled = true

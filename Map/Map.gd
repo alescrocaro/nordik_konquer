@@ -32,9 +32,13 @@ func _process(_delta):
 		for x in gridSize:
 			for y in gridSize:
 				erase_cell(1, Vector2i(x,y))
+				erase_cell(2, Vector2i(x,y))
 		
 		if Player.canSelectPosition():
 			set_cell(1, selectedGridPosition, 1, Vector2i(0, 0), 0)
+			
+		if Player.isAtacking:
+			set_cell(2, selectedGridPosition, 4, Vector2i(0, 0), 0)
 #end func _process 
 
 func getRandomTile():

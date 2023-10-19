@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://bpwvehkgyvpfd"]
+[gd_scene load_steps=3 format=3 uid="uid://bpwvehkgyvpfd"]
 
 [ext_resource type="Texture2D" uid="uid://b35fn1neaqslq" path="res://assets/enemy_island_32x32.png" id="1_5qrvs"]
+[ext_resource type="Script" path="res://Islands/EnemyIsland.gd" id="1_bd171"]
 
 [node name="EnemyIsland" type="Node2D"]
+script = ExtResource("1_bd171")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = ExtResource("1_5qrvs")

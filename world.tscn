@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://tmjt5ytuo4dy"]
+[gd_scene load_steps=23 format=3 uid="uid://tmjt5ytuo4dy"]
 
 [ext_resource type="PackedScene" uid="uid://d1mfomqp1sk7t" path="res://Map/Map.tscn" id="1_a88kt"]
 [ext_resource type="Script" path="res://world.gd" id="1_hoisl"]
@@ -6,14 +6,13 @@
 [ext_resource type="FontFile" uid="uid://7lq4ug78jinv" path="res://assets/nordicfont/Tundra.ttf" id="3_5dxoa"]
 [ext_resource type="Texture2D" uid="uid://cv8tqac4p0mi6" path="res://assets/heart.png" id="3_6sqqt"]
 [ext_resource type="Texture2D" uid="uid://npfb47hvjsxh" path="res://assets/card_turn_to_right.png" id="5_3v2ww"]
+[ext_resource type="Script" path="res://HealthBar.gd" id="5_vnc1v"]
 [ext_resource type="Script" path="res://ButtonTurnRight.gd" id="6_0xpf4"]
 [ext_resource type="Texture2D" uid="uid://b6clclg03sj5l" path="res://assets/card_turn_to_left.png" id="6_hhyxh"]
 [ext_resource type="Script" path="res://ButtonTurnLeft.gd" id="8_3mxcp"]
 [ext_resource type="Script" path="res://FPS.gd" id="9_seopv"]
+[ext_resource type="Texture2D" uid="uid://bqqumoivxa7o3" path="res://assets/card_cannon_atack.png" id="10_hgpv5"]
 [ext_resource type="Script" path="res://Button.gd" id="11_l4qmh"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_do0vj"]
-font = ExtResource("3_5dxoa")
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_au1ld"]
 
@@ -47,6 +46,8 @@ script = ExtResource("1_hoisl")
 
 [node name="Map" parent="." instance=ExtResource("1_a88kt")]
 layer_1/z_index = 0
+desertIslandAmount = 7
+enemyIslandAmount = 4
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("2_3qric")]
 
@@ -68,7 +69,34 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="HeaderContainer" type="Control" parent="CanvasLayer/HudManager"]
+layout_mode = 1
+anchors_preset = 0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HudManager/HeaderContainer"]
+layout_mode = 2
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 40.0
+offset_bottom = 40.0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("3_6sqqt")
+
+[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer/HudManager/HeaderContainer"]
+layout_direction = 2
+layout_mode = 2
+offset_left = 44.0
+offset_top = 10.0
+offset_right = 191.0
+offset_bottom = 37.0
+size_flags_horizontal = 6
+size_flags_vertical = 4
+value = 100.0
+script = ExtResource("5_vnc1v")
+
 [node name="HeaderMarginContainer" type="MarginContainer" parent="CanvasLayer/HudManager"]
+visible = false
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 1.0
@@ -83,17 +111,6 @@ theme_override_constants/margin_bottom = 8
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
-
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HudManager/HeaderMarginContainer/HealthContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-texture = ExtResource("3_6sqqt")
-
-[node name="TextHealth" type="Label" parent="CanvasLayer/HudManager/HeaderMarginContainer/HealthContainer"]
-layout_mode = 2
-text = "HEALTH: 777"
-label_settings = SubResource("LabelSettings_do0vj")
 
 [node name="FooterMarginContainer" type="MarginContainer" parent="CanvasLayer/HudManager"]
 layout_mode = 1
@@ -113,9 +130,10 @@ theme_override_constants/margin_right = 8
 theme_override_constants/margin_bottom = 8
 
 [node name="CardsContainer" type="HBoxContainer" parent="CanvasLayer/HudManager/FooterMarginContainer"]
+layout_direction = 2
 layout_mode = 2
-size_flags_horizontal = 0
 size_flags_vertical = 8
+theme_override_constants/separation = 24
 
 [node name="TurnContainer" type="VBoxContainer" parent="CanvasLayer/HudManager/FooterMarginContainer/CardsContainer"]
 layout_mode = 2
@@ -142,6 +160,22 @@ theme_override_styles/pressed = SubResource("StyleBoxEmpty_aa0dj")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_427dy")
 icon = ExtResource("6_hhyxh")
 script = ExtResource("8_3mxcp")
+
+[node name="AttacksContainer" type="VBoxContainer" parent="CanvasLayer/HudManager/FooterMarginContainer/CardsContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 12
+
+[node name="ButtonCannonAttack" type="Button" parent="CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/AttacksContainer" groups=["turn"]]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_au1ld")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_g3wol")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_ymwk1")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_re1rk")
+icon = ExtResource("10_hgpv5")
+script = ExtResource("6_0xpf4")
 
 [node name="FPS" type="Label" parent="CanvasLayer/HudManager"]
 layout_mode = 0

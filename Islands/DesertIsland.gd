@@ -1,7 +1,7 @@
 class_name Desert_island
 extends Node2D
 
-@onready var tileMapDict = $"../Map".tileMapDict
+@onready var tileMapDict = get_node('/root/Map').tileMapDict
 @onready var playerSprite: Sprite2D = $"playerSprite"
 
 func _ready():

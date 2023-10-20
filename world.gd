@@ -65,15 +65,20 @@ func generateEnemyIslands() -> void:
 
 		var enemyIslandTile = Map.getRandomTile()
 
-		if (enemyIslandCount > 0 && Map.isNear(6, 'EnemyIsland', enemyIslandTile) && enemyIslandCountIterations < 3 * enemyIslandAmount):
+		if (
+			enemyIslandCount > 0 &&
+			Map.isNear(5, 'EnemyIsland', enemyIslandTile) &&
+			enemyIslandCountIterations < 3 * enemyIslandAmount
+		):
 			continue
 		#end if
 
 		if Map.tileMapDict[str(enemyIslandTile.gridPosition)].type == 'Ocean':
 			enemyIslandCount += 1
-			Map.tileMapDict[str(enemyIslandTile.gridPosition)].type = 'EnemyIsland'
-
+			
 			var enemyIslandInstance = EnemyIsland.instantiate()
+			Map.tileMapDict[str(enemyIslandTile.gridPosition)].type = 'EnemyIsland'
+			Map.tileMapDict[str(enemyIslandTile.gridPosition)].reference = enemyIslandInstance
 			enemyIslandInstance.position = enemyIslandTile.globalPosition
 
 			get_node('./Islands').add_child(enemyIslandInstance)

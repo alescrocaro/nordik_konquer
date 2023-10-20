@@ -4,14 +4,17 @@ extends Node2D
 
 ######### SIGNALS #########
 signal healthChanged
+signal startedAttack
+signal finishedAttack
 
 ######### VARS #########
-@onready var map = $"../Map"
+@onready var map: Map = get_node('/root/GameManager/Map')
 @onready var playerSprite: Sprite2D = $"playerSprite"
 
+@export var playerCannonDamage: float = 10 
 @export var maxHealth: float = 100 
 @onready var currentHealth: float = maxHealth
-@onready var isAtacking: bool = false
+@onready var isAtackingByCannon: bool = false
 
 var currentTile
 
@@ -33,8 +36,10 @@ func _ready():
 #end func _ready
 
 func _process(_delta):
-	moveByMouseClick()
-	handleCannonAtack()
+	if isAtackingByCannon:
+		handleCannonAtack()
+	else:
+		moveByMouseClick()
 #end func _process
 
 
@@ -47,8 +52,13 @@ func moveByMouseClick() -> void:
 
 
 func handleCannonAtack() -> void:
-	if Input.is_action_just_pressed('mouse_left') && isAtacking:
-		isAtacking = false
+	startingAttack()
+	if Input.is_action_just_pressed('mouse_left') && canDoCannonAttack() && isAtackingByCannon:
+		if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
+			map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerCannonDamage)
+		isAtackingByCannon = false
+		map.cleanAtackTiles()
+		finishingAttack()
 	#end if
 #end func handleCannonAtack
 
@@ -78,7 +88,7 @@ func changeFrame(tile, newTile) -> void:
 #end func changeFrame
 
 func canSelectPosition():
-	if map.tileMapDict.has( str(map.selectedGridPosition) ):
+	if !isAtackingByCannon && map.tileMapDict.has( str(map.selectedGridPosition) ):
 		var tile = map.tileMapDict[ str(map.selectedGridPosition) ]
 		if (map.tileMapDict[ str(tile.gridPosition) ].type == 'Ocean'):
 			if (
@@ -113,4 +123,92 @@ func hurtByEnemy(damageTaken):
 		
 		print('currentHealth after damage: ', currentHealth)
 		healthChanged.emit()
-	
+#end func hurtByEnemy
+
+func canDoCannonAttack():
+	if (
+		(
+			(
+				playerSprite.get_frame() == 0 ||
+				playerSprite.get_frame() == 2
+			) && (
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(1,0)) ) ||
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(2,0)) ) ||
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-1,0)) ) ||
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-2,0)) )
+			)
+		) || (
+			(
+				playerSprite.get_frame() == 1 ||
+				playerSprite.get_frame() == 3
+			) &&
+			(
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,1)) ) ||
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,2)) ) ||
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,-1)) ) ||
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,-2)) )
+			)
+		)
+	):
+		return true
+	#end if
+
+	return false
+#end func canSelectPosition
+
+func getAvailableCannonAtackTiles():
+	var availablePositions: PackedVector2Array = []
+	if (playerSprite.get_frame() == 0 || playerSprite.get_frame() == 2):
+		if (
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(1,0)) )
+		):
+			availablePositions.append(currentTile.gridPosition - Vector2i(1,0))
+			
+		if (
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(2,0)) )
+		):
+			availablePositions.append(currentTile.gridPosition - Vector2i(2,0))
+			
+		if (
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-1,0)) )
+		):
+			availablePositions.append(currentTile.gridPosition - Vector2i(-1,0))
+			
+		if (
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-2,0)) ) 
+		):
+			availablePositions.append(currentTile.gridPosition - Vector2i(-2,0))
+	#end if
+
+	if (playerSprite.get_frame() == 1 || playerSprite.get_frame() == 3):
+		if (
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,1)) )
+		):
+			availablePositions.append(currentTile.gridPosition - Vector2i(0,1))
+			
+		if (
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,2)) )
+		):
+			availablePositions.append(currentTile.gridPosition - Vector2i(0,2))
+			
+		if (
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,-1)) )
+		):
+			availablePositions.append(currentTile.gridPosition - Vector2i(0,-1))
+			
+		if (
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,-2)) )
+		):
+			availablePositions.append(currentTile.gridPosition - Vector2i(0,-2))
+	#end if
+
+	return availablePositions
+#end func getAvailableCannonAtackTiles
+
+func startingAttack():
+	startedAttack.emit()
+#end func startingAttack
+
+func finishingAttack():
+	finishedAttack.emit()
+#end func finishingAttack

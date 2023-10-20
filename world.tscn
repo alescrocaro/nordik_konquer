@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://tmjt5ytuo4dy"]
+[gd_scene load_steps=27 format=3 uid="uid://tmjt5ytuo4dy"]
 
 [ext_resource type="PackedScene" uid="uid://d1mfomqp1sk7t" path="res://Map/Map.tscn" id="1_a88kt"]
 [ext_resource type="Script" path="res://world.gd" id="1_hoisl"]
@@ -6,13 +6,14 @@
 [ext_resource type="FontFile" uid="uid://7lq4ug78jinv" path="res://assets/nordicfont/Tundra.ttf" id="3_5dxoa"]
 [ext_resource type="Texture2D" uid="uid://cv8tqac4p0mi6" path="res://assets/heart.png" id="3_6sqqt"]
 [ext_resource type="Texture2D" uid="uid://npfb47hvjsxh" path="res://assets/card_turn_to_right.png" id="5_3v2ww"]
-[ext_resource type="Script" path="res://HealthBar.gd" id="5_vnc1v"]
-[ext_resource type="Script" path="res://ButtonTurnRight.gd" id="6_0xpf4"]
+[ext_resource type="Script" path="res://uis/LifeBar/HealthBar.gd" id="5_vy3pq"]
 [ext_resource type="Texture2D" uid="uid://b6clclg03sj5l" path="res://assets/card_turn_to_left.png" id="6_hhyxh"]
-[ext_resource type="Script" path="res://ButtonTurnLeft.gd" id="8_3mxcp"]
-[ext_resource type="Script" path="res://FPS.gd" id="9_seopv"]
+[ext_resource type="Script" path="res://uis/ButtonTurnRight.gd" id="7_ovmos"]
+[ext_resource type="Script" path="res://uis/ButtonTurnLeft.gd" id="8_1i33q"]
+[ext_resource type="Script" path="res://uis/ButtonCannonAttack.gd" id="10_1eug3"]
 [ext_resource type="Texture2D" uid="uid://bqqumoivxa7o3" path="res://assets/card_cannon_atack.png" id="10_hgpv5"]
-[ext_resource type="Script" path="res://Button.gd" id="11_l4qmh"]
+[ext_resource type="Script" path="res://uis/FPS.gd" id="12_r72cf"]
+[ext_resource type="Script" path="res://uis/Button.gd" id="13_gx0n7"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_au1ld"]
 
@@ -21,6 +22,12 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ymwk1"]
 content_margin_left = 0.0
 content_margin_top = 4.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_pigsa"]
+content_margin_left = 0.0
+content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 
@@ -36,7 +43,19 @@ content_margin_top = 4.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_mb0q4"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_427dy"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xqe11"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_f7frl"]
 font = ExtResource("3_5dxoa")
@@ -46,8 +65,6 @@ script = ExtResource("1_hoisl")
 
 [node name="Map" parent="." instance=ExtResource("1_a88kt")]
 layer_1/z_index = 0
-desertIslandAmount = 7
-enemyIslandAmount = 4
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("2_3qric")]
 
@@ -93,7 +110,7 @@ offset_bottom = 37.0
 size_flags_horizontal = 6
 size_flags_vertical = 4
 value = 100.0
-script = ExtResource("5_vnc1v")
+script = ExtResource("5_vy3pq")
 
 [node name="HeaderMarginContainer" type="MarginContainer" parent="CanvasLayer/HudManager"]
 visible = false
@@ -147,9 +164,10 @@ size_flags_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxEmpty_au1ld")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_g3wol")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_ymwk1")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_pigsa")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_re1rk")
 icon = ExtResource("5_3v2ww")
-script = ExtResource("6_0xpf4")
+script = ExtResource("7_ovmos")
 
 [node name="ButtonTurnLeft" type="Button" parent="CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/TurnContainer" groups=["turn"]]
 layout_mode = 2
@@ -157,9 +175,10 @@ size_flags_vertical = 8
 theme_override_styles/normal = SubResource("StyleBoxEmpty_vwako")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_dsnkm")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_aa0dj")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_mb0q4")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_427dy")
 icon = ExtResource("6_hhyxh")
-script = ExtResource("8_3mxcp")
+script = ExtResource("8_1i33q")
 
 [node name="AttacksContainer" type="VBoxContainer" parent="CanvasLayer/HudManager/FooterMarginContainer/CardsContainer"]
 layout_mode = 2
@@ -173,9 +192,10 @@ size_flags_vertical = 0
 theme_override_styles/normal = SubResource("StyleBoxEmpty_au1ld")
 theme_override_styles/hover = SubResource("StyleBoxEmpty_g3wol")
 theme_override_styles/pressed = SubResource("StyleBoxEmpty_ymwk1")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_xqe11")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_re1rk")
 icon = ExtResource("10_hgpv5")
-script = ExtResource("6_0xpf4")
+script = ExtResource("10_1eug3")
 
 [node name="FPS" type="Label" parent="CanvasLayer/HudManager"]
 layout_mode = 0
@@ -184,13 +204,13 @@ offset_top = 32.0
 offset_right = 1871.0
 offset_bottom = 58.0
 label_settings = SubResource("LabelSettings_f7frl")
-script = ExtResource("9_seopv")
+script = ExtResource("12_r72cf")
 
-[node name="Button" type="Button" parent="CanvasLayer/HudManager"]
+[node name="ButtonQuit" type="Button" parent="CanvasLayer/HudManager"]
 layout_mode = 0
 offset_left = 1829.0
 offset_top = 104.0
 offset_right = 1889.0
 offset_bottom = 135.0
 text = "Fechar"
-script = ExtResource("11_l4qmh")
+script = ExtResource("13_gx0n7")

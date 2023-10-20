@@ -1,6 +1,10 @@
 class_name EnemyIsland
 extends Node2D
 
+######### SIGNALS #########
+signal healthChanged
+
+######### VARS #########
 @onready var player: Player = get_node('/root/GameManager/Player')
 @onready var map: Map = get_node('/root/GameManager/Map')
 @export var maxHealth: float = 30
@@ -9,6 +13,7 @@ extends Node2D
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	currentHealth = maxHealth
+	healthChanged.emit()
 #end func _ready
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -30,4 +35,5 @@ func destroyYourself():
 
 func tookHit(damage: float):
 	currentHealth -= damage
+	healthChanged.emit()
 #end func tookHit

@@ -109,7 +109,6 @@ offset_right = 191.0
 offset_bottom = 37.0
 size_flags_horizontal = 6
 size_flags_vertical = 4
-value = 100.0
 script = ExtResource("5_vy3pq")
 
 [node name="HeaderMarginContainer" type="MarginContainer" parent="CanvasLayer/HudManager"]

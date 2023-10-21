@@ -28,7 +28,7 @@ func _ready():
 	currentHealth = maxHealth
 	healthChanged.emit()
 	
-	gameManager.finishedPlayerTurn.connect(checkIfIsPlayerNear)
+	gameManager.startedEnemyTurn.connect(checkIfThereIsPlayerNear)
 #end func _ready
 
 func _process(_delta):
@@ -40,7 +40,7 @@ func _process(_delta):
 func hurtPlayer(damage):
 	print('hurting player')
 	player.hurtByEnemy(damage)
-	doAction.emit()	
+	doAction.emit()
 #end func hurtPlayer
 
 func destroyYourself():
@@ -54,8 +54,9 @@ func tookHit(damage: float):
 	healthChanged.emit()
 #end func tookHit
 
-func checkIfIsPlayerNear():
-	var isPlayerNear = map.isNear(3, 'Player', map.tileMapDict[ str(map.getGridPosition(global_position)) ])
+func checkIfThereIsPlayerNear():
+	print('checkIfThereIsPlayerNear')
+	var isPlayerNear = map.isNear(rangeAttack+1, 'Player', map.tileMapDict[ str(map.getGridPosition(global_position)) ])
 	if isPlayerNear:
 		hurtPlayer(damage)
 #end func checkIfIsPlayerNear

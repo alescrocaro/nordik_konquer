@@ -106,37 +106,38 @@ func changeFrame(tile, newTile) -> void:
 
 func getSelectablePosition():
 	if !isAtackingByCannon:
-		if map.tileMapDict[ str(currentTile.gridPosition) ].type == 'Ocean':
-			if (
-				map.tileMapDict.has( 
-					str(currentTile.gridPosition - Vector2i(0,-1)) 
-				) && (
-					playerSprite.get_frame() == 0
-				)
-			):
-				return currentTile.gridPosition - Vector2i(0,-1)
-			#end if
-			if (
-				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-1,0)) ) && (
-					playerSprite.get_frame() == 1
-				)
-			):
-				return currentTile.gridPosition - Vector2i(-1,0)
-			#end if
-			if(
-				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,1)) ) && (
-					playerSprite.get_frame() == 2
-				) 
-			):
-				return currentTile.gridPosition - Vector2i(0,1)
-			#end if
-			if( 
-				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(1,0)) ) && (
-					playerSprite.get_frame() == 3
-				) ):return currentTile.gridPosition - Vector2i(1,0)
-			#end if
+		print('aa')
+		if (
+			map.tileMapDict.has( str( currentTile.gridPosition - Vector2i(0,-1) ) ) &&
+			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Ocean' &&
+			playerSprite.get_frame() == 0
+		):
+			return currentTile.gridPosition - Vector2i(0,-1)
+		#end if
+		if (
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-1,0)) ) &&
+			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(-1,0)) ].type == 'Ocean' &&
+			playerSprite.get_frame() == 1
+
+		):
+			return currentTile.gridPosition - Vector2i(-1,0)
+		#end if
+		if(
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,1)) ) &&
+			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,1)) ].type == 'Ocean' &&
+			playerSprite.get_frame() == 2
+		):
+			return currentTile.gridPosition - Vector2i(0,1)
+		#end if
+		if( 
+			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(1,0)) ) &&
+			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(1,0)) ].type == 'Ocean' &&
+			playerSprite.get_frame() == 3
+		):
+			return currentTile.gridPosition - Vector2i(1,0)
 		#end if
 	#end if
+#end if
 #end func canSelectPosition
 
 func canSelectPosition():

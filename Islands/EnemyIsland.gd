@@ -1,35 +1,51 @@
 class_name EnemyIsland
 extends Node2D
 
+
+
 ######### SIGNALS #########
 signal healthChanged
+signal doAction
+
+
 
 ######### VARS #########
 @onready var player: Player = get_node('/root/GameManager/Player')
 @onready var map: Map = get_node('/root/GameManager/Map')
-@export var maxHealth: float = 30
+@onready var gameManager: GameManager = get_node('/root/GameManager')
+@onready var self_node = $"."
 @onready var currentHealth: float = maxHealth
 
-# Called when the node enters the scene tree for the first time.
+@export var maxHealth: float = 30
+@export var rangeAttack: int = 2
+@export var damage: int = 10
+
+
+
+
+######### FUNCS #########
 func _ready():
 	currentHealth = maxHealth
 	healthChanged.emit()
+	
+	gameManager.finishedPlayerTurn.connect(checkIfIsPlayerNear)
 #end func _ready
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 #	hurtPlayer()
 	if currentHealth <= 0:
 		destroyYourself()
 #end func _process
 
-func hurtPlayer():
+func hurtPlayer(damage):
 	print('hurting player')
-	player.hurtByEnemy(1)
+	player.hurtByEnemy(damage)
+	doAction.emit()	
 #end func hurtPlayer
 
 func destroyYourself():
 	map.tileMapDict[ str(map.getGridPosition(global_position)) ].type = 'Ocean'
+	map.removeWarningTiles(map.getGridPosition(global_position), rangeAttack)
 	queue_free()
 #end func destroyYourself
 
@@ -37,3 +53,9 @@ func tookHit(damage: float):
 	currentHealth -= damage
 	healthChanged.emit()
 #end func tookHit
+
+func checkIfIsPlayerNear():
+	var isPlayerNear = map.isNear(3, 'Player', map.tileMapDict[ str(map.getGridPosition(global_position)) ])
+	if isPlayerNear:
+		hurtPlayer(damage)
+#end func checkIfIsPlayerNear

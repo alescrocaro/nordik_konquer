@@ -1,7 +1,7 @@
 [gd_scene load_steps=27 format=3 uid="uid://tmjt5ytuo4dy"]
 
 [ext_resource type="PackedScene" uid="uid://d1mfomqp1sk7t" path="res://Map/Map.tscn" id="1_a88kt"]
-[ext_resource type="Script" path="res://world.gd" id="1_hoisl"]
+[ext_resource type="Script" path="res://GameBoard/GameBoard.gd" id="1_eo3ht"]
 [ext_resource type="PackedScene" uid="uid://dinm0s6sgjc3f" path="res://Player/Player.tscn" id="2_3qric"]
 [ext_resource type="FontFile" uid="uid://7lq4ug78jinv" path="res://assets/nordicfont/Tundra.ttf" id="3_5dxoa"]
 [ext_resource type="Texture2D" uid="uid://cv8tqac4p0mi6" path="res://assets/heart.png" id="3_6sqqt"]
@@ -61,7 +61,7 @@ content_margin_bottom = 0.0
 font = ExtResource("3_5dxoa")
 
 [node name="GameManager" type="Node2D"]
-script = ExtResource("1_hoisl")
+script = ExtResource("1_eo3ht")
 
 [node name="Map" parent="." instance=ExtResource("1_a88kt")]
 layer_1/z_index = 0
@@ -109,6 +109,7 @@ offset_right = 191.0
 offset_bottom = 37.0
 size_flags_horizontal = 6
 size_flags_vertical = 4
+value = 100.0
 script = ExtResource("5_vy3pq")
 
 [node name="HeaderMarginContainer" type="MarginContainer" parent="CanvasLayer/HudManager"]

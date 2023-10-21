@@ -2,12 +2,14 @@ class_name Player
 extends Node2D
 
 
-######### SIGNALS #########
+########## SIGNALS ##########
 signal healthChanged
 signal startedAttack
 signal finishedAttack
+signal doAction
 
-######### VARS #########
+########## VARS ##########
+@onready var gameManager: GameManager = get_node('/root/GameManager')
 @onready var map: Map = get_node('/root/GameManager/Map')
 @onready var playerSprite: Sprite2D = $"playerSprite"
 
@@ -27,6 +29,7 @@ func _ready():
 		if currentTile.type == 'Ocean':
 			self.global_position = Vector2i(map.getGlobalPosition(currentTile.gridPosition)) + Vector2i(1, -12)
 			map.tileMapDict[str(currentTile.gridPosition)].isPlayerAt = true
+			map.tileMapDict[str(currentTile.gridPosition)].type = 'Player'
 			playerSprite.set_frame(randi() % 4)
 			break
 		#end if
@@ -36,29 +39,43 @@ func _ready():
 #end func _ready
 
 func _process(_delta):
-	if isAtackingByCannon:
-		handleCannonAtack()
-	else:
-		moveByMouseClick()
+	if gameManager.isPlayerTurn:
+		if isAtackingByCannon:
+			handleCannonAtack()
+		else:
+			moveByMouseClick()
 #end func _process
 
 
 func moveByMouseClick() -> void:
-	if Input.is_action_just_pressed('mouse_left') && canSelectPosition():
+	if (
+		gameManager.isPlayerTurn &&
+		Input.is_action_just_pressed('mouse_left') && 
+		canSelectPosition()
+	):
 		self.global_position = Vector2i(map.selectedGlobalPosition) + Vector2i(1, -12)
 		currentTile = updatePosition(currentTile)
+		doAction.emit()
+		
 	#end if
 #end func moveByMouseClick
 
 
 func handleCannonAtack() -> void:
 	startingAttack()
-	if Input.is_action_just_pressed('mouse_left') && canDoCannonAttack() && isAtackingByCannon:
+	if (
+		gameManager.isPlayerTurn &&
+		Input.is_action_just_pressed('mouse_left') &&
+		canDoCannonAttack() &&
+		isAtackingByCannon
+	):
 		if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
 			map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerCannonDamage)
 		isAtackingByCannon = false
 		map.cleanAtackTiles()
 		finishingAttack()
+		
+		doAction.emit()
 	#end if
 #end func handleCannonAtack
 
@@ -86,6 +103,41 @@ func changeFrame(tile, newTile) -> void:
 		playerSprite.set_frame(3)
 	#end elifs
 #end func changeFrame
+
+func getSelectablePosition():
+	if !isAtackingByCannon:
+		if map.tileMapDict[ str(currentTile.gridPosition) ].type == 'Ocean':
+			if (
+				map.tileMapDict.has( 
+					str(currentTile.gridPosition - Vector2i(0,-1)) 
+				) && (
+					playerSprite.get_frame() == 0
+				)
+			):
+				return currentTile.gridPosition - Vector2i(0,-1)
+			#end if
+			if (
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-1,0)) ) && (
+					playerSprite.get_frame() == 1
+				)
+			):
+				return currentTile.gridPosition - Vector2i(-1,0)
+			#end if
+			if(
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,1)) ) && (
+					playerSprite.get_frame() == 2
+				) 
+			):
+				return currentTile.gridPosition - Vector2i(0,1)
+			#end if
+			if( 
+				map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(1,0)) ) && (
+					playerSprite.get_frame() == 3
+				) ):return currentTile.gridPosition - Vector2i(1,0)
+			#end if
+		#end if
+	#end if
+#end func canSelectPosition
 
 func canSelectPosition():
 	if !isAtackingByCannon && map.tileMapDict.has( str(map.selectedGridPosition) ):
@@ -212,3 +264,16 @@ func startingAttack():
 func finishingAttack():
 	finishedAttack.emit()
 #end func finishingAttack
+
+func handleRotate(direction: String):
+	var currentFrame = playerSprite.get_frame()
+
+	var frame: int = currentFrame - 1 if currentFrame > 0 else 3
+	if direction == 'left':
+		frame = currentFrame + 1 if currentFrame < 3 else 0
+	#end if
+
+	playerSprite.set_frame(frame)
+	
+	doAction.emit()
+#end func handleRotate

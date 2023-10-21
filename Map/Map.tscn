@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://d1mfomqp1sk7t"]
+[gd_scene load_steps=15 format=3 uid="uid://d1mfomqp1sk7t"]
 
 [ext_resource type="Texture2D" uid="uid://c12s3oqo883qf" path="res://assets/water.png" id="1_5rfn0"]
 [ext_resource type="Texture2D" uid="uid://bybykmt7h3th4" path="res://assets/selectionTile.png" id="2_rdjwv"]
@@ -6,6 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://ds5xhp7j3kdle" path="res://assets/desert_island_32x32.png" id="3_u4475"]
 [ext_resource type="Texture2D" uid="uid://b35fn1neaqslq" path="res://assets/enemy_island_32x32.png" id="4_7kycx"]
 [ext_resource type="Texture2D" uid="uid://6pktatg1d8sa" path="res://assets/atackSelectionTile.png" id="5_f7ugl"]
+[ext_resource type="Texture2D" uid="uid://c72c2am8vqgou" path="res://assets/warningSelectionTile.png" id="6_hqp4s"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_7qdwv"]
 texture = ExtResource("1_5rfn0")
@@ -32,6 +33,11 @@ texture = ExtResource("5_f7ugl")
 texture_region_size = Vector2i(32, 32)
 0:0/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ws85d"]
+texture = ExtResource("6_hqp4s")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+
 [sub_resource type="TileSet" id="TileSet_xlrs8"]
 tile_shape = 1
 tile_layout = 4
@@ -42,6 +48,7 @@ sources/1 = SubResource("TileSetAtlasSource_f705h")
 sources/2 = SubResource("TileSetAtlasSource_b87mi")
 sources/3 = SubResource("TileSetAtlasSource_qboss")
 sources/4 = SubResource("TileSetAtlasSource_dum88")
+sources/5 = SubResource("TileSetAtlasSource_ws85d")
 
 [node name="TileMap" type="TileMap"]
 y_sort_enabled = true
@@ -50,12 +57,12 @@ cell_quadrant_size = 32
 format = 2
 layer_0/name = "ocean"
 layer_0/y_sort_enabled = true
-layer_1/name = "selectedTile"
+layer_1/name = "selection"
 layer_1/enabled = true
 layer_1/modulate = Color(1, 1, 1, 1)
 layer_1/y_sort_enabled = true
-layer_1/y_sort_origin = 0
-layer_1/z_index = 9999
+layer_1/y_sort_origin = 5
+layer_1/z_index = 9998
 layer_1/tile_data = PackedInt32Array()
 layer_2/name = "atacks"
 layer_2/enabled = true
@@ -64,4 +71,11 @@ layer_2/y_sort_enabled = true
 layer_2/y_sort_origin = 0
 layer_2/z_index = 9999
 layer_2/tile_data = PackedInt32Array()
+layer_3/name = "warningTiles"
+layer_3/enabled = true
+layer_3/modulate = Color(1, 1, 1, 1)
+layer_3/y_sort_enabled = true
+layer_3/y_sort_origin = 0
+layer_3/z_index = 9997
+layer_3/tile_data = PackedInt32Array()
 script = ExtResource("3_3r1xx")

@@ -3,6 +3,8 @@ extends TileMap
 
 @onready var player: Player = get_node('/root/GameManager/Player')
 @onready var gameManager: GameManager = get_node('/root/GameManager')
+@onready var desertIsland = preload("res://Islands/DesertIsland.tscn")
+@onready var enemyIsland = preload("res://Islands/EnemyIsland.tscn")
 
 @export var desertIslandAmount: int = 7
 @export var enemyIslandAmount: int = 4
@@ -28,6 +30,8 @@ func _ready():
 			}
 		#end for y
 	#end for x
+	generateDesertIslands()
+	generateEnemyIslands()
 #end func _ready
 
 func _process(_delta):
@@ -106,6 +110,7 @@ func setAvailableCannonAtacks():
 	var availableCannonAtackTiles: PackedVector2Array = player.getAvailableCannonAtackTiles()
 	for availableTile in availableCannonAtackTiles:
 		set_cell(2, availableTile, 4, Vector2i(0, 0))
+	#end for
 #end func setAvailableCannonAtacks
 
 func cleanAtackTiles():
@@ -158,3 +163,85 @@ func removeWarningTiles(gridPosition: Vector2i, tileAmount):
 		#end for y
 	#end for x
 #end func setWarningTiles
+
+func generateDesertIslands() -> void:
+	var desertIslandCount: int = 0
+	var desertIslandCountIterations: int = 0
+	var rangeToSpawn: int = 6 
+
+	while true:
+		desertIslandCountIterations += 1
+		if desertIslandCount >= desertIslandAmount:
+			break
+		#end if
+
+		#check if there is too many iterations and didnt find a position available
+		if (desertIslandCountIterations >= 3 * desertIslandAmount):
+			desertIslandCountIterations = 0
+			rangeToSpawn -= 1
+			if rangeToSpawn == 0:
+				break
+		#end if
+
+		var desertIslandTile = getRandomTile()
+
+		#check if random position is near another tile with this node
+		if (desertIslandCount > 0 && isNear(rangeToSpawn, 'DesertIsland', desertIslandTile)):
+			continue
+		#end if
+
+		if tileMapDict[str(desertIslandTile.gridPosition)].type == 'Ocean':
+			desertIslandCount += 1
+			tileMapDict[str(desertIslandTile.gridPosition)].type = 'DesertIsland'
+
+			var desertIslandInstance = desertIsland.instantiate()
+			desertIslandInstance.position = desertIslandTile.globalPosition
+
+			get_node('/root/GameManager/Islands').add_child(desertIslandInstance)
+		#end if
+	#end while
+#end func generateDesertIslands
+
+func generateEnemyIslands() -> void:
+	var enemyIslandCount: int = 0
+	var enemyIslandCountIterations: int = 0
+	var rangeToSpawn: int = 3 
+
+	while true:
+		if enemyIslandCount >= enemyIslandAmount:
+			break
+		#end if
+
+		#check if there is too many iterations and didnt find a position available
+		if (enemyIslandCountIterations >= 3 * enemyIslandAmount):
+			enemyIslandCountIterations = 0
+			rangeToSpawn -= 1
+			if rangeToSpawn == 0:
+				break
+		#end if
+
+		var enemyIslandTile = getRandomTile()
+
+		#check if random position is near another tile with this node
+		if (
+			enemyIslandCount > 0 &&
+			isNear(rangeToSpawn, 'EnemyIsland', enemyIslandTile)
+		):
+			continue
+		#end if
+
+		#instantiate node if found a good ocean tile
+		if tileMapDict[str(enemyIslandTile.gridPosition)].type == 'Ocean':
+			enemyIslandCount += 1
+
+			var enemyIslandInstance: EnemyIsland = enemyIsland.instantiate()
+			tileMapDict[str(enemyIslandTile.gridPosition)].type = 'EnemyIsland'
+			tileMapDict[str(enemyIslandTile.gridPosition)].reference = enemyIslandInstance
+			enemyIslandInstance.position = enemyIslandTile.globalPosition
+
+			gameManager.islandEnemies.append(tileMapDict[str(enemyIslandTile.gridPosition)])
+			setWarningTiles(enemyIslandTile.gridPosition, 2)
+			get_node('/root/GameManager/Islands').add_child(enemyIslandInstance)
+		#end if
+	#end while
+#end func generateEnemyIslands

@@ -22,7 +22,7 @@ signal finishedEnemyTurn
 @export var enemyIslandAmount: int = 4
 
 var isPlayerTurn = true
-var maxActions = 25
+var maxActions = 5
 var actions = maxActions
 var islandEnemies = []
 
@@ -30,10 +30,11 @@ var islandEnemies = []
 
 ########## FUNCS ##########
 func _ready():
+	startedPlayerTurn.emit()
 	player.doAction.connect(controller)
 	enemyIsland.doAction.connect(controller)
-	finishedPlayerTurn.connect(controller)
-	finishedEnemyTurn.connect(controller)
+#	finishedPlayerTurn.connect(controller)
+#	finishedEnemyTurn.connect(controller)
 #end func _ready
 
 func handlePlayerDecision() -> void:
@@ -49,35 +50,29 @@ func controller() -> void:
 	print('controller, isPlayerTurn: ', isPlayerTurn)
 	print('beforeactions: ', actions)
 	if isPlayerTurn:
-		if actions == maxActions:
-			print('actions == maxActions')
-			startedPlayerTurn.emit()
-		#end if
+		handlePlayerDecision()
+
 		actions -= 1
 		if actions < 1:
 			print('finishedPlayerTurn')
 			isPlayerTurn = false
 			actions = maxActions
 			finishedPlayerTurn.emit()
+			#startedEnemyTurn.emit()
+			return
 		#end if
-
-		handlePlayerDecision()
-
 	#end if
 	else:
-		if actions == maxActions:
-			print('actions == maxActions')
-			startedEnemyTurn.emit()
-		#end if
+		handleIslandEnemies()
 		actions -= 1
 		if actions < 1:
 			print('finishedEnemyTurn')
 			isPlayerTurn = true
 			actions = maxActions
-			finishedEnemyTurn.emit()
+			#finishedEnemyTurn.emit()
+			startedPlayerTurn.emit()
+			return
 		#end if
-
-		handleIslandEnemies()
 	#end else
 	print('afteractions: ', actions)
 	#end while

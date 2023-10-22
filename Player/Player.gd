@@ -106,7 +106,6 @@ func changeFrame(tile, newTile) -> void:
 
 func getSelectablePosition():
 	if !isAtackingByCannon:
-		print('aa')
 		if (
 			map.tileMapDict.has( str( currentTile.gridPosition - Vector2i(0,-1) ) ) &&
 			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Ocean' &&

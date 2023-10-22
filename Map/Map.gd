@@ -26,7 +26,8 @@ func _ready():
 				"globalPosition": getGlobalPosition(Vector2i(x, y)), 
 				"isPlayerAt": false, 
 				"reference": null, 
-				"warningAmount": 0
+				"warningAmount": 0,
+				"canAct": false
 			}
 		#end for y
 	#end for x
@@ -55,9 +56,7 @@ func _process(_delta):
 	if (
 		gameManager.isPlayerTurn
 	):
-		print(player.getSelectablePosition())
 		if (player.getSelectablePosition()):
-			print('is')
 			set_cell(1, player.getSelectablePosition(), 1, Vector2i(0, 0))
 		#end if
 	#end if

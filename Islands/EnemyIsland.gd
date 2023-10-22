@@ -32,7 +32,7 @@ func _ready():
 #end func _ready
 
 func _process(_delta):
-#	hurtPlayer()
+#	hurtPlayer()'
 	if currentHealth <= 0:
 		destroyYourself()
 #end func _process
@@ -59,4 +59,7 @@ func checkIfThereIsPlayerNear():
 	var isPlayerNear = map.isNear(rangeAttack+1, 'Player', map.tileMapDict[ str(map.getGridPosition(global_position)) ])
 	if isPlayerNear:
 		hurtPlayer(damage)
+	else:
+		print('cant hurt player')
+#		gameManager.islandEnemies.find()
 #end func checkIfIsPlayerNear

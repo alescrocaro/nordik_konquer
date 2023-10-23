@@ -114,7 +114,8 @@ func calculateDistance(point1: Vector2i, point2: Vector2i):
 		distanceY = -distanceY
 	
 	return distanceX + distanceY - 1
-	
+#end func calculateDistance
+
 func countFinishedEnemyTurn():
 	print('count')
 	islandEnemiesFinishedTurnAmount += 1
@@ -124,4 +125,5 @@ func countFinishedEnemyTurn():
 		islandEnemiesFinishedTurnAmount = 0
 		finishedEnemyTurn.emit()
 		startedPlayerTurn.emit()
-
+	#end if
+#end func countFinishedEnemyTurn

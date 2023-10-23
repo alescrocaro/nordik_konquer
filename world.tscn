@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://tmjt5ytuo4dy"]
+[gd_scene load_steps=30 format=3 uid="uid://tmjt5ytuo4dy"]
 
 [ext_resource type="PackedScene" uid="uid://d1mfomqp1sk7t" path="res://Map/Map.tscn" id="1_a88kt"]
 [ext_resource type="Script" path="res://GameBoard/GameManager.gd" id="1_ehkx6"]
@@ -14,6 +14,8 @@
 [ext_resource type="Texture2D" uid="uid://bqqumoivxa7o3" path="res://assets/card_cannon_atack.png" id="10_hgpv5"]
 [ext_resource type="Script" path="res://uis/FPS.gd" id="12_r72cf"]
 [ext_resource type="Script" path="res://uis/Button.gd" id="13_gx0n7"]
+[ext_resource type="Script" path="res://LabelCombatMode.gd" id="15_2f8os"]
+[ext_resource type="Script" path="res://LabelActionsAmount.gd" id="16_6sm1a"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_au1ld"]
 
@@ -228,10 +230,33 @@ script = ExtResource("13_gx0n7")
 
 [node name="LOG" type="Label" parent="CanvasLayer/HudManager"]
 layout_mode = 0
-offset_left = 23.0
-offset_top = 143.0
-offset_right = 197.0
-offset_bottom = 383.0
+offset_left = 10.0
+offset_top = 112.0
+offset_right = 226.0
+offset_bottom = 352.0
+theme_override_fonts/font = ExtResource("3_5dxoa")
 theme_override_styles/normal = SubResource("StyleBoxFlat_tqddb")
 text = "LOG"
 clip_text = true
+
+[node name="LabelCombatMode" type="Label" parent="CanvasLayer/HudManager"]
+layout_mode = 0
+offset_left = 531.0
+offset_top = 29.0
+offset_right = 1438.0
+offset_bottom = 198.0
+theme_override_fonts/font = ExtResource("3_5dxoa")
+theme_override_font_sizes/font_size = 128
+text = "COMBAT MODE"
+script = ExtResource("15_2f8os")
+
+[node name="LabelActionsAmount" type="Label" parent="CanvasLayer/HudManager"]
+layout_mode = 0
+offset_left = 1635.0
+offset_top = 150.0
+offset_right = 1875.0
+offset_bottom = 220.0
+theme_override_fonts/font = ExtResource("3_5dxoa")
+theme_override_font_sizes/font_size = 48
+text = "ACTIONS: 5"
+script = ExtResource("16_6sm1a")

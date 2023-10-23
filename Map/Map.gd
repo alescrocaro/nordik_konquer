@@ -56,8 +56,13 @@ func _process(_delta):
 	if (
 		gameManager.isPlayerTurn
 	):
-		if (player.getSelectablePosition()):
-			set_cell(1, player.getSelectablePosition(), 1, Vector2i(0, 0))
+		var targetPosition = player.getSelectablePosition()
+		if targetPosition:
+			if player.combatMode:
+				if tileMapDict[ str(targetPosition) ].warningAmount > 0:
+					set_cell(1, targetPosition, 1, Vector2i(0, 0))
+			else:
+				set_cell(1, targetPosition, 1, Vector2i(0, 0))
 		#end if
 	#end if
 #end func _process
@@ -176,7 +181,7 @@ func removeWarningTiles(gridPosition: Vector2i, tileAmount):
 			if (
 				tileMapDict.has( str(gridPosition + Vector2i(-x, -y)) ) && (
 					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Ocean' ||
-					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Ocean'
+					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Player'
 				)
 			):
 				tileMapDict[ str(gridPosition + Vector2i(-x, -y)) ].warningAmount -= 1

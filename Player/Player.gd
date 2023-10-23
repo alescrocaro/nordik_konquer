@@ -19,6 +19,7 @@ signal doAction
 @onready var isAttackingWithCannon: bool = false
 
 var currentTile
+var combatMode = false
 
 
 
@@ -53,9 +54,15 @@ func moveByMouseClick() -> void:
 		Input.is_action_just_pressed('mouse_left') && 
 		canSelectPosition()
 	):
-		self.global_position = Vector2i(map.selectedGlobalPosition) + Vector2i(1, -12)
-		currentTile = updatePosition(currentTile)
-		doAction.emit()
+		if combatMode:
+			if map.tileMapDict[ str(map.selectedGridPosition) ].warningAmount > 0:
+				self.global_position = Vector2i(map.selectedGlobalPosition) + Vector2i(1, -12)
+				currentTile = updatePosition(currentTile)
+				doAction.emit()
+		else:
+			self.global_position = Vector2i(map.selectedGlobalPosition) + Vector2i(1, -12)
+			currentTile = updatePosition(currentTile)
+			doAction.emit()
 		
 	#end if
 #end func moveByMouseClick
@@ -119,7 +126,6 @@ func getSelectablePosition():
 			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-1,0)) ) &&
 			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(-1,0)) ].type == 'Ocean' &&
 			playerSprite.get_frame() == 1
-
 		):
 			return currentTile.gridPosition - Vector2i(-1,0)
 		#end if
@@ -138,8 +144,7 @@ func getSelectablePosition():
 			return currentTile.gridPosition - Vector2i(1,0)
 		#end if
 	#end if
-#end if
-#end func canSelectPosition
+#end func getSelectablePosition
 
 func canSelectPosition():
 	if !isAttackingWithCannon && map.tileMapDict.has( str(map.selectedGridPosition) ):
@@ -172,12 +177,22 @@ func canSelectPosition():
 #end func canSelectPosition
 
 func hurtByEnemy(damageTaken):
-	if currentHealth > 0:
+	if (currentHealth - damageTaken) < 0:
+		currentHealth = 0
+	else: 
 		currentHealth -= damageTaken
 		
-		print('currentHealth after damage: ', currentHealth)
-		healthChanged.emit()
+	print('currentHealth after damage: ', currentHealth)
+	healthChanged.emit()
 #end func hurtByEnemy
+
+func heal(amount):
+	if (currentHealth + amount) >= maxHealth:
+		currentHealth = maxHealth
+	else: 
+		currentHealth += amount
+	
+	healthChanged.emit()
 
 func canDoCannonAttack():
 	if (

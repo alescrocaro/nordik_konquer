@@ -13,8 +13,14 @@ func _ready():
 	gameManager.finishedPlayerTurn.connect(disableButton)
 #end func _ready
 
+func _process(_delta):
+	if gameManager.isPlayerTurn && disabled: #anti bug
+		disabled = false
+#end func _process
+
+
 func _pressed() -> void:
-	player.isAtackingByCannon = true
+	player.isAttackingWithCannon = true
 	map.setAvailableCannonAtacks()
 #end func _pressed
 
@@ -23,6 +29,7 @@ func disableButton():
 #end func disableButton
 
 func enableButton():
+	print('enabling button')
 	disabled = false
 #end func _ready
 

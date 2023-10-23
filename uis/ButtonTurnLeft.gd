@@ -13,6 +13,11 @@ func _ready():
 	gameManager.finishedPlayerTurn.connect(disableButton)
 #end func _ready
 
+func _process(_delta):
+	if gameManager.isPlayerTurn && disabled: #anti bug
+		disabled = false
+#end func _process
+
 func _pressed() -> void:
 	player.handleRotate('left')
 #end func _pressed

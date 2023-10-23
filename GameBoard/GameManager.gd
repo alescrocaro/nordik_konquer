@@ -8,6 +8,7 @@ signal startedPlayerTurn
 signal finishedPlayerTurn
 signal startedEnemyTurn
 signal finishedEnemyTurn
+signal enemyCanAct
 
 
 
@@ -22,9 +23,10 @@ signal finishedEnemyTurn
 @export var enemyIslandAmount: int = 4
 
 var isPlayerTurn = true
-var maxActions = 5
+var maxActions = 15
 var actions = maxActions
-var islandEnemies = []
+var islandEnemies: Dictionary = {}
+var islandEnemiesFinishedTurnAmount = 0
 
 
 
@@ -32,7 +34,9 @@ var islandEnemies = []
 func _ready():
 	startedPlayerTurn.emit()
 	player.doAction.connect(controller)
-	enemyIsland.doAction.connect(controller)
+	for enemy in islandEnemies:
+		islandEnemies[str(enemy)].reference.finishedTurn.connect(countFinishedEnemyTurn)
+#	enemyIsland.finishedTurn.connect(countFinishedEnemyTurn)
 #	finishedPlayerTurn.connect(controller)
 #	finishedEnemyTurn.connect(controller)
 #end func _ready
@@ -47,10 +51,10 @@ func handleIslandEnemies() -> void:
 
 func controller() -> void:
 	print()
-	print('controller, isPlayerTurn: ', isPlayerTurn)
+	print('controller - isPlayerTurn: ', isPlayerTurn)
 	print('beforeactions: ', actions)
 	if isPlayerTurn:
-		handlePlayerDecision()
+#		handlePlayerDecision()
 
 		actions -= 1
 		if actions < 1:
@@ -58,22 +62,66 @@ func controller() -> void:
 			isPlayerTurn = false
 			actions = maxActions
 			finishedPlayerTurn.emit()
-			#startedEnemyTurn.emit()
+			startedEnemyTurn.emit()
 			return
 		#end if
 	#end if
-	else:
-		handleIslandEnemies()
-		actions -= 1
-		if actions < 1:
-			print('finishedEnemyTurn')
-			isPlayerTurn = true
-			actions = maxActions
-			#finishedEnemyTurn.emit()
-			startedPlayerTurn.emit()
-			return
-		#end if
-	#end else
+	
+	
+#	else:
+#		print('------ ENTROU ELSE ------')
+##		handleIslandEnemies()
+##		actions -= 1
+##		if actions < 1:
+##			print('finishedEnemyTurn')
+##			isPlayerTurn = true
+##			actions = maxActions
+##			#finishedEnemyTurn.emit()
+##			startedPlayerTurn.emit()
+##			return
+##		#end if
+##		while (actions >= 1):
+#		print(islandEnemies.values())
+#
+#		var i = islandEnemies.size()
+#		for islandEnemy in islandEnemies:
+#			print(islandEnemy)
+#			var hasAttacked: bool = islandEnemies[ str(islandEnemy) ].reference.attackPlayer()
+#			if hasAttacked:
+#				actions -= 1
+#				islandEnemies[ str(islandEnemy) ].canAct = true
+#				if actions < 1:
+#					break
+#			else:
+#				islandEnemies[ str(islandEnemy) ].canAct = false
+#			#end ifelse
+#		#end for
+##		startedPlayerTurn.emit()
+#		#end while
+#	#end else
 	print('afteractions: ', actions)
 	#end while
 #end func controller
+
+func calculateDistance(point1: Vector2i, point2: Vector2i):
+	var distanceX: int = point1.x - point2.x
+	var distanceY: int = point1.y - point2.y
+	
+	if distanceX < 0:
+		distanceX = -distanceX
+	
+	if distanceY < 0:
+		distanceY = -distanceY
+	
+	return distanceX + distanceY - 1
+	
+func countFinishedEnemyTurn():
+	print('count')
+	islandEnemiesFinishedTurnAmount += 1
+	if islandEnemiesFinishedTurnAmount >= islandEnemies.size():
+		print('ai')
+		isPlayerTurn = true
+		islandEnemiesFinishedTurnAmount = 0
+		finishedEnemyTurn.emit()
+		startedPlayerTurn.emit()
+

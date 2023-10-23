@@ -5,12 +5,12 @@ extends Button
 
 func _pressed():
 #	print(map.tileMapDict)
-	var lista = gameManager.islandEnemies
-	var result = null
-	for enemy in lista:
-		if enemy.type == "EnemyIsland":
-			result = enemy
-	print(result) 
+	#var lista = gameManager.islandEnemies
+#	var result = null
+#	for enemy in lista:
+#		if enemy.type == "EnemyIsland":
+#			result = enemy
+	#print(lista) 
 #	print(gameManager.islandEnemies.find(teste))
 	get_tree().quit()
 

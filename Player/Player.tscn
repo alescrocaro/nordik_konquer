@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://cm8vru0mn7y3p" path="res://assets/shipPlayerIso.png" id="2_wsaim"]
 
 [node name="Player" type="Node2D"]
+top_level = true
 script = ExtResource("1_d0kub")
 
 [node name="playerSprite" type="Sprite2D" parent="."]

@@ -16,7 +16,7 @@ signal doAction
 @export var playerCannonDamage: float = 10 
 @export var maxHealth: float = 100 
 @onready var currentHealth: float = maxHealth
-@onready var isAtackingByCannon: bool = false
+@onready var isAttackingWithCannon: bool = false
 
 var currentTile
 
@@ -40,7 +40,7 @@ func _ready():
 
 func _process(_delta):
 	if gameManager.isPlayerTurn:
-		if isAtackingByCannon:
+		if isAttackingWithCannon:
 			handleCannonAtack()
 		else:
 			moveByMouseClick()
@@ -67,11 +67,11 @@ func handleCannonAtack() -> void:
 		gameManager.isPlayerTurn &&
 		Input.is_action_just_pressed('mouse_left') &&
 		canDoCannonAttack() &&
-		isAtackingByCannon
+		isAttackingWithCannon
 	):
 		if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
 			map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerCannonDamage)
-		isAtackingByCannon = false
+		isAttackingWithCannon = false
 		map.cleanAtackTiles()
 		finishingAttack()
 		
@@ -82,9 +82,11 @@ func handleCannonAtack() -> void:
 
 func updatePosition(tile):
 	map.tileMapDict[ str( tile.gridPosition ) ].isPlayerAt = false
+	map.tileMapDict[ str( tile.gridPosition ) ].type = "Ocean"
 	
 	var selectedGridTile = map.tileMapDict[ str(map.selectedGridPosition) ]
 	map.tileMapDict[ str( selectedGridTile.gridPosition ) ].isPlayerAt = true
+	map.tileMapDict[ str( selectedGridTile.gridPosition ) ].type = "Player"
 	
 	changeFrame(tile, selectedGridTile)
 	currentTile = selectedGridTile
@@ -105,7 +107,7 @@ func changeFrame(tile, newTile) -> void:
 #end func changeFrame
 
 func getSelectablePosition():
-	if !isAtackingByCannon:
+	if !isAttackingWithCannon:
 		if (
 			map.tileMapDict.has( str( currentTile.gridPosition - Vector2i(0,-1) ) ) &&
 			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Ocean' &&
@@ -140,7 +142,7 @@ func getSelectablePosition():
 #end func canSelectPosition
 
 func canSelectPosition():
-	if !isAtackingByCannon && map.tileMapDict.has( str(map.selectedGridPosition) ):
+	if !isAttackingWithCannon && map.tileMapDict.has( str(map.selectedGridPosition) ):
 		var tile = map.tileMapDict[ str(map.selectedGridPosition) ]
 		if (map.tileMapDict[ str(tile.gridPosition) ].type == 'Ocean'):
 			if (

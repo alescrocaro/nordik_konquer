@@ -146,19 +146,39 @@ func setWarningTiles(gridPosition: Vector2i, tileAmount):
 func removeWarningTiles(gridPosition: Vector2i, tileAmount):
 	for x in tileAmount+1:
 		for y in tileAmount+1:
-			if tileMapDict.has( str(gridPosition + Vector2i(x, y)) ) && tileMapDict[str(gridPosition + Vector2i(x, y)) ].type == 'Ocean':
+			if (
+				tileMapDict.has( str(gridPosition + Vector2i(x, y)) ) && (
+					tileMapDict[str(gridPosition + Vector2i(x, y)) ].type == 'Ocean' || 
+					tileMapDict[str(gridPosition + Vector2i(x, y)) ].type == 'Player'
+				)
+			):
 				tileMapDict[ str(gridPosition + Vector2i(x, y)) ].warningAmount -= 1
 			#end if
 
-			if tileMapDict.has( str(gridPosition + Vector2i(-x, y)) ) && tileMapDict[str(gridPosition + Vector2i(-x, y)) ].type == 'Ocean':
+			if (
+				tileMapDict.has( str(gridPosition + Vector2i(-x, y)) ) && (
+					tileMapDict[str(gridPosition + Vector2i(-x, y)) ].type == 'Ocean' ||
+					tileMapDict[str(gridPosition + Vector2i(-x, y)) ].type == 'Player'
+				)
+			):
 				tileMapDict[ str(gridPosition + Vector2i(-x, y)) ].warningAmount -= 1
 			#end if
 
-			if tileMapDict.has( str(gridPosition + Vector2i(x, -y)) ) && tileMapDict[str(gridPosition + Vector2i(x, -y)) ].type == 'Ocean':
+			if (
+				tileMapDict.has( str(gridPosition + Vector2i(x, -y)) ) && (
+					tileMapDict[str(gridPosition + Vector2i(x, -y)) ].type == 'Ocean' ||
+					tileMapDict[str(gridPosition + Vector2i(x, -y)) ].type == 'Player'
+				)
+			):
 				tileMapDict[ str(gridPosition + Vector2i(x, -y)) ].warningAmount -= 1
 			#end if
 
-			if tileMapDict.has( str(gridPosition + Vector2i(-x, -y)) ) && tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Ocean':
+			if (
+				tileMapDict.has( str(gridPosition + Vector2i(-x, -y)) ) && (
+					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Ocean' ||
+					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Ocean'
+				)
+			):
 				tileMapDict[ str(gridPosition + Vector2i(-x, -y)) ].warningAmount -= 1
 			#end if
 		#end for y
@@ -240,7 +260,7 @@ func generateEnemyIslands() -> void:
 			tileMapDict[str(enemyIslandTile.gridPosition)].reference = enemyIslandInstance
 			enemyIslandInstance.position = enemyIslandTile.globalPosition
 
-			gameManager.islandEnemies.append(tileMapDict[str(enemyIslandTile.gridPosition)])
+			gameManager.islandEnemies[ str(enemyIslandTile.gridPosition) ] = tileMapDict[ str(enemyIslandTile.gridPosition) ]
 			setWarningTiles(enemyIslandTile.gridPosition, 2)
 			get_node('/root/GameManager/Islands').add_child(enemyIslandInstance)
 		#end if

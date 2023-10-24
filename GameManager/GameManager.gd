@@ -33,7 +33,9 @@ var islandEnemiesFinishedTurnAmount = 0
 ########## FUNCS ##########
 func _ready():
 	startedPlayerTurn.emit()
-	player.doAction.connect(controller)
+	player.doAction.connect(controller, 1)
+	player.attackWithCannon.connect(controller, 1)
+	player.attackWithSniper.connect(controller, 1)
 	for enemy in islandEnemies:
 		islandEnemies[str(enemy)].reference.finishedTurn.connect(countFinishedEnemyTurn)
 #	enemyIsland.finishedTurn.connect(countFinishedEnemyTurn)
@@ -49,14 +51,15 @@ func handleIslandEnemies() -> void:
 	print('handleIslandEnemies')
 #end func handleIslandEnemies
 
-func controller() -> void:
+func controller(actionAmountToDecrease: int) -> void:
 	print()
 	print('controller - isPlayerTurn: ', isPlayerTurn)
 	print('beforeactions: ', actions)
+	print('actionAmountToDecrease: ', actionAmountToDecrease)
 	if isPlayerTurn:
 #		handlePlayerDecision()
 
-		actions -= 1
+		actions -= actionAmountToDecrease
 		if actions < 1:
 			print('finishedPlayerTurn')
 			isPlayerTurn = false

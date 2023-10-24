@@ -48,15 +48,16 @@ func _process(_delta):
 	for x in gridSize:
 		for y in gridSize:
 			erase_cell(1, Vector2i(x,y))
+			#set warning tiles
 			if tileMapDict[ str(Vector2i(x,y)) ].warningAmount > 0:
 				set_cell(3, Vector2i(x,y), 5, Vector2i(0, 0))
-			else:
+			else: # if tile has no warningAmount, erase cell to turn it back into ocean
 				erase_cell(3, Vector2i(x,y))
 
 	if (
 		gameManager.isPlayerTurn
 	):
-		var targetPosition = player.getSelectablePosition()
+		var targetPosition = player.getSelectablePositionToMove()
 		if targetPosition:
 			if player.combatMode:
 				if tileMapDict[ str(targetPosition) ].warningAmount > 0:
@@ -112,20 +113,28 @@ func isNear(tilesAmount: int, tileType: String, tile) -> bool:
 	return false
 #end func isNear
 
-func setAvailableCannonAtacks():
-	var availableCannonAtackTiles: PackedVector2Array = player.getAvailableCannonAtackTiles()
-	for availableTile in availableCannonAtackTiles:
+func setAvailableCannonAttacks():
+	var availableCannonAttackTiles: PackedVector2Array = player.getAvailableCannonAttackTiles()
+	for availableTile in availableCannonAttackTiles:
 		set_cell(2, availableTile, 4, Vector2i(0, 0))
 	#end for
-#end func setAvailableCannonAtacks
+#end func setAvailableCannonAttacks
 
-func cleanAtackTiles():
+func setAvailableSniperAttacks():
+	var availableSniperAttackTiles: PackedVector2Array = player.getAvailableSniperAttackTiles()
+	print(availableSniperAttackTiles)
+	for availableTile in availableSniperAttackTiles:
+		set_cell(2, availableTile, 4, Vector2i(0, 0))
+	#end for
+#end func setAvailableCannonAttacks
+
+func cleanAttackTiles():
 	for x in gridSize:
 		for y in gridSize:
 			erase_cell(2, Vector2i(x,y))
 		#end for y
 	#end for x
-#end func cleanAtackTiles
+#end func cleanAttackTiles
 
 func setWarningTiles(gridPosition: Vector2i, tileAmount):
 	for x in tileAmount+1:

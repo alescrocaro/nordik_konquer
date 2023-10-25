@@ -2,13 +2,15 @@ class_name Player
 extends Node2D
 
 
+
 ########## SIGNALS ##########
 signal healthChanged
-signal startedAttack
-signal finishedAttack
 signal doAction
 signal attackWithCannon
 signal attackWithSniper
+signal attackWithHarpoon
+
+
 
 ########## VARS ##########
 @onready var gameManager: GameManager = get_node('/root/GameManager')
@@ -16,20 +18,25 @@ signal attackWithSniper
 @onready var playerSprite: Sprite2D = $"playerSprite"
 @onready var log: Label = get_node('/root/GameManager/CanvasLayer/HudManager/LOG')
 
-@export var playerCannonDamage: float = 10 
-@export var playerSniperDamage: float = 20
+@export var playerCannonDamage: float = 20 
+@export var playerSniperDamage: float = 30
+@export var playerHarpoonDamage: float = 10
 @export var maxHealth: float = 100 
 @export var cannonBallMaxAmount: float = 10
 @onready var currentHealth: float = maxHealth
 @onready var isAttackingWithCannon: bool = false
 @onready var isAttackingWithSniper: bool = false
+@onready var isAttackingWithHarpoon: bool = false
 
 var currentTile
 var combatMode = false
 var sniperRangePositions = range(-3, 4, 1)
+var harpoonRangePositions = range(1, 3, 1)
+var spriteFrames = [0, 1, 2, 3]
 var actionsToMove = 1
 var actionsToAttackWithCannon = 2
 var actionsToAttackWithSniper = 4
+var actionsToAttackWithHarpoon = 4
 
 
 
@@ -55,8 +62,13 @@ func _process(_delta):
 			handleCannonAtack()
 		elif isAttackingWithSniper:
 			handleSniperAttack()
+		elif isAttackingWithHarpoon:
+			print('isAttackingWithHarpoon')
+			handleHarpoonAttack()
 		else:
 			moveByMouseClick()
+		#end ifelifelse
+	#end if
 #end func _process
 
 func moveByMouseClick() -> void:
@@ -80,51 +92,85 @@ func moveByMouseClick() -> void:
 
 func handleCannonAtack() -> void:
 	print('handleCannonAtack')
-	startingAttack()
 	if (
 		gameManager.isPlayerTurn &&
 		Input.is_action_just_pressed('mouse_left') &&
 		canDoCannonAttack() &&
 		isAttackingWithCannon
 	):
-		if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
-			if randi() % 100 <= 90: # has a 90% of chance of hitting target 
-				map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerCannonDamage)
-			else:
-				log.text = "MISS\n" + log.text # if miss the shot, it is shown on LOG
-		else: # if clicking in anything that has not a reference, LOG shows the clicked tile type
-			log.text = "SHOT ON " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + '\n' + log.text
+		if (
+			map.tileMapDict[ str(map.selectedGridPosition) ].type == 'Ship' ||
+	 		map.tileMapDict[ str(map.selectedGridPosition) ].type == 'EnemyIsland'
+		):
+			if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
+				if randi() % 100 <= 89: # has a 90% of chance of hitting target 
+					map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerCannonDamage)
+				else:
+					log.text = "MISS\n" + log.text # if miss the shot, it is shown on LOG
+			else: # if clicking in anything that has not a reference, LOG shows the clicked tile type
+				log.text = "SHOT ON " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + '\n' + log.text
+			#end ifelse
+			
+			attackWithCannon.emit(actionsToAttackWithCannon)
+		else:
+			log.text = "CANNOT ATTACK " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + ' WITH CANNON ' + '\n' + log.text
 		#end ifelse
 		isAttackingWithCannon = false
 		map.cleanAttackTiles()
-		finishingAttack()
-		
-		attackWithCannon.emit(actionsToAttackWithCannon)
 	#end if
 #end func handleCannonAtack
 
 func handleSniperAttack() -> void:
-	startingAttack()
 	if (
 		gameManager.isPlayerTurn &&
 		Input.is_action_just_pressed('mouse_left') &&
 		canDoSniperAttack() &&
 		isAttackingWithSniper
 	):
-		if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
-			if randi() % 100 <= 20: # has a 20% of chance of hitting target 
-				map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerSniperDamage)
-			else:
-				log.text = "MISS\n" + log.text # if miss the shot, it is shown on LOG
-		else: # if clicking in anything that has not a reference, LOG shows the clicked tile type
-			log.text = "SHOT ON " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + '\n' + log.text
+		if map.tileMapDict[ str(map.selectedGridPosition) ].type == 'Ship':
+			if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
+				if randi() % 100 <= 19: # has a 20% of chance of hitting target 
+					map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerSniperDamage)
+				else:
+					log.text = "MISS\n" + log.text # if miss the shot, it is shown on LOG
+			else: # if clicking in anything that has not a reference, LOG shows the clicked tile type
+				log.text = "SHOT ON " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + '\n' + log.text
+			
+			attackWithSniper.emit(actionsToAttackWithSniper)
+		else:
+			log.text = "CANNOT ATTACK " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + ' WITH SNIPER ' + '\n' + log.text
+		#end ifelse
 		isAttackingWithSniper = false
 		map.cleanAttackTiles()
-		finishingAttack()
+		#end if
+#end func handleSniperAttack
+
+func handleHarpoonAttack() -> void:
+	if (
+		Input.is_action_just_pressed('mouse_left') &&
+		gameManager.isPlayerTurn &&
+		canDoHarpoonAttack() &&
+		isAttackingWithHarpoon
+	):
+		if map.tileMapDict[ str(map.selectedGridPosition) ].type == 'Shark':
+			if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
+				if randi() % 100 <= 94: # has a 95% of chance of hitting target 
+					map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerHarpoonDamage)
+				else:
+					log.text = "MISS\n" + log.text # if miss the shot, it is shown on LOG
+			else: # if clicking in anything that has not a reference, LOG shows the clicked tile type
+				log.text = "SHOT ON " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + '\n' + log.text
+			
+			attackWithSniper.emit(actionsToAttackWithSniper)
+		else:
+			log.text = "CANNOT ATTACK " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + ' WITH HARPOON ' + '\n' + log.text
+		#end ifelse
 		
-		attackWithSniper.emit(actionsToAttackWithSniper)
+		isAttackingWithHarpoon = false
+		map.cleanAttackTiles()
+			
 	#end if
-#end func handleCannonAtack
+#end func handleHarpoonAttack
 
 func updatePosition(tile):
 	map.tileMapDict[ str( tile.gridPosition ) ].isPlayerAt = false
@@ -153,7 +199,7 @@ func changeFrame(tile, newTile) -> void:
 #end func changeFrame
 
 func getSelectablePositionToMove():
-	if !isAttackingWithCannon && !isAttackingWithSniper:
+	if !isAttackingWithCannon && !isAttackingWithSniper && !isAttackingWithHarpoon: ##### TODO REFACTORING - only 1 var isAttacking
 		if (
 			map.tileMapDict.has( str( currentTile.gridPosition - Vector2i(0,-1) ) ) &&
 			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Ocean' &&
@@ -263,7 +309,20 @@ func canDoSniperAttack():
 	return false
 #end func canDoSniperAttack
 
-func getAvailableCannonAttackTiles():
+func canDoHarpoonAttack():
+	var availableTilesToAttack = getAvailableHarpoonAttackTiles() 
+	if (
+		map.tileMapDict.has( str(map.selectedGridPosition) ) &&
+		availableTilesToAttack.has( map.tileMapDict[str(map.selectedGridPosition)].gridPosition )
+	):
+		return true
+		#end for y
+	#end for x
+
+	return false
+#end func canDoHarpoonAttack
+
+func getAvailableCannonAttackTiles(): ##### TODO REFACTORING - use loop
 	var availablePositions: PackedVector2Array = []
 	if (playerSprite.get_frame() == 0 || playerSprite.get_frame() == 2):
 		if (
@@ -325,13 +384,30 @@ func getAvailableSniperAttackTiles():
 	return availablePositions
 #end func getAvailableSniperAttackTiles
 
-func startingAttack():
-	startedAttack.emit()
-#end func startingAttack
+func getAvailableHarpoonAttackTiles(): ##### TODO REFACTORING - use loop ?
+	var availablePositions: PackedVector2Array = []
 
-func finishingAttack():
-	finishedAttack.emit()
-#end func finishingAttack
+	if (
+		map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,1)) )
+	):
+		availablePositions.append(currentTile.gridPosition - Vector2i(0,1))
+	if (
+		map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,-1)) )
+	):
+		availablePositions.append(currentTile.gridPosition - Vector2i(0,-1))
+	if (
+		map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(1,0)) )
+	):
+		availablePositions.append(currentTile.gridPosition - Vector2i(1,0))
+	if (
+		map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-1,0)) )
+	):
+		availablePositions.append(currentTile.gridPosition - Vector2i(-1,0))
+
+
+	print('availablePositions', availablePositions)
+	return availablePositions
+#end func getAvailableHarpoonAttackTiles
 
 func handleRotate(direction: String):
 	var currentFrame = playerSprite.get_frame()

@@ -1,10 +1,11 @@
-[gd_scene load_steps=32 format=3 uid="uid://tmjt5ytuo4dy"]
+[gd_scene load_steps=35 format=3 uid="uid://tmjt5ytuo4dy"]
 
 [ext_resource type="PackedScene" uid="uid://d1mfomqp1sk7t" path="res://Map/Map.tscn" id="1_a88kt"]
 [ext_resource type="Script" path="res://GameManager/GameManager.gd" id="1_r4irp"]
 [ext_resource type="PackedScene" uid="uid://dinm0s6sgjc3f" path="res://Player/Player.tscn" id="2_3qric"]
 [ext_resource type="FontFile" uid="uid://7lq4ug78jinv" path="res://assets/nordicfont/Tundra.ttf" id="3_5dxoa"]
 [ext_resource type="Texture2D" uid="uid://cv8tqac4p0mi6" path="res://assets/heart.png" id="3_6sqqt"]
+[ext_resource type="Texture2D" uid="uid://xwu7052q40t2" path="res://assets/cannon_balls.png" id="4_a4ufl"]
 [ext_resource type="Texture2D" uid="uid://npfb47hvjsxh" path="res://assets/card_turn_to_right.png" id="5_3v2ww"]
 [ext_resource type="Script" path="res://uis/LifeBar/HealthBar.gd" id="5_vy3pq"]
 [ext_resource type="Texture2D" uid="uid://b6clclg03sj5l" path="res://assets/card_turn_to_left.png" id="6_hhyxh"]
@@ -13,8 +14,10 @@
 [ext_resource type="Script" path="res://uis/ButtonCannonAttack.gd" id="10_1eug3"]
 [ext_resource type="Texture2D" uid="uid://bqqumoivxa7o3" path="res://assets/card_cannon_atack.png" id="10_hgpv5"]
 [ext_resource type="Texture2D" uid="uid://mydc056ctal0" path="res://assets/card_sniper_attack.png" id="12_1p11b"]
+[ext_resource type="Texture2D" uid="uid://cispkqqg6tdr0" path="res://assets/card_harpoon_atack.png" id="12_hisa2"]
 [ext_resource type="Script" path="res://uis/FPS.gd" id="12_r72cf"]
 [ext_resource type="Script" path="res://uis/ButtonSniperAttack.gd" id="13_1csu5"]
+[ext_resource type="Script" path="res://uis/ButtonHarpoonAttack.gd" id="13_136m5"]
 [ext_resource type="Script" path="res://uis/Button.gd" id="13_gx0n7"]
 [ext_resource type="Script" path="res://uis/LabelCombatMode.gd" id="17_qe5fm"]
 [ext_resource type="Script" path="res://uis/LabelActionsAmount.gd" id="18_xnw5v"]
@@ -101,11 +104,38 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HeaderContainer" type="Control" parent="CanvasLayer/HudManager"]
+[node name="CannonBallsContainer" type="Control" parent="CanvasLayer/HudManager"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1680.0
+offset_top = 244.0
+offset_right = 1680.0
+offset_bottom = 244.0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HudManager/CannonBallsContainer"]
+layout_mode = 2
+offset_right = 32.0
+offset_bottom = 32.0
+scale = Vector2(2, 2)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("4_a4ufl")
+
+[node name="Label" type="Label" parent="CanvasLayer/HudManager/CannonBallsContainer"]
+layout_mode = 2
+offset_left = 81.0
+offset_top = 19.0
+offset_right = 124.0
+offset_bottom = 70.0
+theme_override_fonts/font = ExtResource("3_5dxoa")
+theme_override_font_sizes/font_size = 48
+text = "10"
+
+[node name="HealthContainer" type="Control" parent="CanvasLayer/HudManager"]
 layout_mode = 1
 anchors_preset = 0
 
-[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HudManager/HeaderContainer"]
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HudManager/HealthContainer"]
 layout_mode = 2
 offset_left = 8.0
 offset_top = 8.0
@@ -115,7 +145,7 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 texture = ExtResource("3_6sqqt")
 
-[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer/HudManager/HeaderContainer"]
+[node name="ProgressBar" type="ProgressBar" parent="CanvasLayer/HudManager/HealthContainer"]
 layout_direction = 2
 layout_mode = 2
 offset_left = 44.0
@@ -207,6 +237,18 @@ theme_override_styles/focus = SubResource("StyleBoxEmpty_re1rk")
 icon = ExtResource("10_hgpv5")
 script = ExtResource("10_1eug3")
 
+[node name="ButtonHarpoonAttack" type="Button" parent="CanvasLayer/HudManager/FooterMarginContainer/CardsContainer" groups=["turn"]]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_au1ld")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_g3wol")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_ymwk1")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_xqe11")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_re1rk")
+icon = ExtResource("12_hisa2")
+script = ExtResource("13_136m5")
+
 [node name="ButtonSniperAttack" type="Button" parent="CanvasLayer/HudManager/FooterMarginContainer/CardsContainer" groups=["turn"]]
 layout_mode = 2
 size_flags_horizontal = 0
@@ -238,6 +280,7 @@ text = "Fechar"
 script = ExtResource("13_gx0n7")
 
 [node name="LOG" type="Label" parent="CanvasLayer/HudManager"]
+clip_contents = true
 layout_mode = 0
 offset_left = 10.0
 offset_top = 112.0

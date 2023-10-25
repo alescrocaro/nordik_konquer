@@ -56,7 +56,7 @@ func selfController():
 		actions = maxActionsAmount
 		finishedTurn.emit()
 
-	#end if
+	#end ifelse
 #end func selfController
 
 

@@ -36,6 +36,7 @@ func _ready():
 	player.doAction.connect(controller, 1)
 	player.attackWithCannon.connect(controller, 1)
 	player.attackWithSniper.connect(controller, 1)
+	player.attackWithHarpoon.connect(controller, 1)
 	for enemy in islandEnemies:
 		islandEnemies[str(enemy)].reference.finishedTurn.connect(countFinishedEnemyTurn)
 #	enemyIsland.finishedTurn.connect(countFinishedEnemyTurn)
@@ -70,7 +71,6 @@ func controller(actionAmountToDecrease: int) -> void:
 		#end if
 	#end if
 	
-	
 #	else:
 #		print('------ ENTROU ELSE ------')
 ##		handleIslandEnemies()
@@ -102,8 +102,8 @@ func controller(actionAmountToDecrease: int) -> void:
 ##		startedPlayerTurn.emit()
 #		#end while
 #	#end else
-	print('afteractions: ', actions)
 	#end while
+	print('afteractions: ', actions)
 #end func controller
 
 func calculateDistance(point1: Vector2i, point2: Vector2i):

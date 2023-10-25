@@ -1,6 +1,7 @@
 class_name Map
 extends TileMap
 
+########## VARS ##########
 @onready var player: Player = get_node('/root/GameManager/Player')
 @onready var gameManager: GameManager = get_node('/root/GameManager')
 @onready var desertIsland = preload("res://Islands/DesertIsland.tscn")
@@ -16,6 +17,7 @@ var selectedGridPosition: Vector2i
 
 
 
+########## FUNCS ##########
 func _ready():
 	for x in gridSize:
 		for y in gridSize:
@@ -38,6 +40,7 @@ func _ready():
 func _process(_delta):
 	selectedGridPosition = getGridPosition(get_global_mouse_position() + Vector2(0, 8)) # Used "+ Vector2(0, 8)" because the map is isometric, so the selection area is different for the tilemap
 	selectedGlobalPosition = getGlobalPosition(selectedGridPosition)
+#	print('selected: ', selectedGridPosition)
 		
 #	if (
 #		!selectedGridPosition.x < 0 &&
@@ -53,6 +56,9 @@ func _process(_delta):
 				set_cell(3, Vector2i(x,y), 5, Vector2i(0, 0))
 			else: # if tile has no warningAmount, erase cell to turn it back into ocean
 				erase_cell(3, Vector2i(x,y))
+			#end ifelse
+		#end for y
+	#end for x
 
 	if (
 		gameManager.isPlayerTurn
@@ -64,6 +70,7 @@ func _process(_delta):
 					set_cell(1, targetPosition, 1, Vector2i(0, 0))
 			else:
 				set_cell(1, targetPosition, 1, Vector2i(0, 0))
+			#end ifelse
 		#end if
 	#end if
 #end func _process
@@ -113,20 +120,38 @@ func isNear(tilesAmount: int, tileType: String, tile) -> bool:
 	return false
 #end func isNear
 
-func setAvailableCannonAttacks():
-	var availableCannonAttackTiles: PackedVector2Array = player.getAvailableCannonAttackTiles()
-	for availableTile in availableCannonAttackTiles:
+#func setAvailableTilesToAttack(attackType):
+#	var types = {
+#		'CANNON': func(): player.getAvailableCannonAttackTiles(),
+#		'SNIPER': func(): player.getAvailableSniperAttackTiles(),
+#		'HARPOON': func(): player.getAvailableHarpoonAttackTiles(),
+#	}
+#	var availableAttackTiles: PackedVector2Array = types[attackType].call()
+#	for availableTile in availableAttackTiles:
+#		set_cell(2, availableTile, 4, Vector2i(0, 0))
+#	#end for
+##end func setAvailableTilesToAttack
+
+func setAvailableCannonAttacks():##### TODO REFACTORING - MERGE setAvailableAttacks FUNCTIONS
+	var availableAttackTiles: PackedVector2Array = player.getAvailableCannonAttackTiles()
+	for availableTile in availableAttackTiles:
 		set_cell(2, availableTile, 4, Vector2i(0, 0))
 	#end for
 #end func setAvailableCannonAttacks
 
-func setAvailableSniperAttacks():
-	var availableSniperAttackTiles: PackedVector2Array = player.getAvailableSniperAttackTiles()
-	print(availableSniperAttackTiles)
-	for availableTile in availableSniperAttackTiles:
+func setAvailableSniperAttacks():##### TODO REFACTORING - MERGE setAvailableAttacks FUNCTIONS
+	var availableAttackTiles: PackedVector2Array = player.getAvailableSniperAttackTiles()
+	for availableTile in availableAttackTiles:
 		set_cell(2, availableTile, 4, Vector2i(0, 0))
 	#end for
-#end func setAvailableCannonAttacks
+#end func setAvailableSniperAttacks
+
+func setAvailableHarpoonAttacks():##### TODO REFACTORING - MERGE setAvailableAttacks FUNCTIONS
+	var availableAttackTiles: PackedVector2Array = player.getAvailableHarpoonAttackTiles()
+	for availableTile in availableAttackTiles:
+		set_cell(2, availableTile, 4, Vector2i(0, 0))
+	#end for
+#end func setAvailableHarpoonAttacks
 
 func cleanAttackTiles():
 	for x in gridSize:

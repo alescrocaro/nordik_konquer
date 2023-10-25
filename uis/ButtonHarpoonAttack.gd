@@ -4,6 +4,6 @@ extends Button
 @onready var map: Map = get_node('/root/GameManager/Map')
 
 func _pressed() -> void:
-	player.isAttackingWithCannon = true
-	map.setAvailableCannonAttacks()
+	player.isAttackingWithHarpoon = true
+	map.setAvailableHarpoonAttacks()
 #end func _pressed

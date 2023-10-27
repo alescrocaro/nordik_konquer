@@ -25,7 +25,7 @@
 [ext_resource type="Script" path="res://uis/LabelCombatMode.gd" id="17_qe5fm"]
 [ext_resource type="Script" path="res://uis/LabelActionsAmount.gd" id="18_xnw5v"]
 [ext_resource type="Script" path="res://LOG.gd" id="23_4dj87"]
-[ext_resource type="Script" path="res://ButtonSkipTurn.gd" id="26_v7so0"]
+[ext_resource type="Script" path="res://uis/ButtonSkipTurn.gd" id="26_68hfo"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_au1ld"]
 
@@ -365,12 +365,13 @@ text = "ACTIONS: 5"
 script = ExtResource("18_xnw5v")
 
 [node name="ButtonSkipTurn" type="Button" parent="CanvasLayer/HudManager"]
-offset_left = 1390.0
-offset_top = 916.0
-offset_right = 1454.0
-offset_bottom = 980.0
+layout_mode = 0
+offset_left = 23.0
+offset_top = 667.0
+offset_right = 181.0
+offset_bottom = 764.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 theme_override_fonts/font = ExtResource("3_5dxoa")
 text = "SKIP"
-script = ExtResource("26_v7so0")
+script = ExtResource("26_68hfo")

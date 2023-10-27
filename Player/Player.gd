@@ -116,7 +116,7 @@ func handleCannonAtack() -> void:
 	 		enemyType == 'ENEMYISLAND'
 		):
 			if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
-				if randi() % 100 <= 79: # has a 80% of chance of hitting target 
+				if randi() % 100 <= 74: # has a 75% of chance of hitting target 
 					myLOG.addLOG('SHOT ' + enemyType + ' WITH CANNON')
 					map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerCannonDamage)
 				else:

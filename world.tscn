@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://tmjt5ytuo4dy"]
+[gd_scene load_steps=38 format=3 uid="uid://tmjt5ytuo4dy"]
 
 [ext_resource type="PackedScene" uid="uid://d1mfomqp1sk7t" path="res://Map/Map.tscn" id="1_a88kt"]
 [ext_resource type="Script" path="res://GameManager/GameManager.gd" id="1_r4irp"]
@@ -9,7 +9,10 @@
 [ext_resource type="Texture2D" uid="uid://npfb47hvjsxh" path="res://assets/card_turn_to_right.png" id="5_3v2ww"]
 [ext_resource type="Script" path="res://uis/LifeBar/HealthBar.gd" id="5_vy3pq"]
 [ext_resource type="Texture2D" uid="uid://b6clclg03sj5l" path="res://assets/card_turn_to_left.png" id="6_hhyxh"]
+[ext_resource type="Script" path="res://CurrentCannonBallsAmount.gd" id="6_sxchn"]
+[ext_resource type="Texture2D" uid="uid://co7qurvuq8mj0" path="res://assets/sniper_bullet.png" id="7_bgkyl"]
 [ext_resource type="Script" path="res://uis/ButtonTurnRight.gd" id="7_ovmos"]
+[ext_resource type="Script" path="res://SniperBulletsBallsAmount.gd" id="7_x173k"]
 [ext_resource type="Script" path="res://uis/ButtonTurnLeft.gd" id="8_1i33q"]
 [ext_resource type="Script" path="res://uis/ButtonCannonAttack.gd" id="10_1eug3"]
 [ext_resource type="Texture2D" uid="uid://bqqumoivxa7o3" path="res://assets/card_cannon_atack.png" id="10_hgpv5"]
@@ -85,6 +88,12 @@ script = ExtResource("1_r4irp")
 layer_1/z_index = 0
 
 [node name="Player" parent="." groups=["player"] instance=ExtResource("2_3qric")]
+playerCannonDamage = 20.0
+playerSniperDamage = 30.0
+playerHarpoonDamage = 10.0
+maxSniperBulletsAmount = 3.0
+currentSniperBulletsAmount = 3.0
+maxHealth = 100.0
 
 [node name="Islands" type="Node2D" parent="."]
 
@@ -121,7 +130,7 @@ size_flags_horizontal = 0
 size_flags_vertical = 0
 texture = ExtResource("4_a4ufl")
 
-[node name="Label" type="Label" parent="CanvasLayer/HudManager/CannonBallsContainer"]
+[node name="CurrentCannonBallsAmount" type="Label" parent="CanvasLayer/HudManager/CannonBallsContainer"]
 layout_mode = 2
 offset_left = 81.0
 offset_top = 19.0
@@ -130,6 +139,35 @@ offset_bottom = 70.0
 theme_override_fonts/font = ExtResource("3_5dxoa")
 theme_override_font_sizes/font_size = 48
 text = "10"
+script = ExtResource("6_sxchn")
+
+[node name="SniperBulletsContainer" type="Control" parent="CanvasLayer/HudManager"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = 1680.0
+offset_top = 328.0
+offset_right = 1680.0
+offset_bottom = 328.0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HudManager/SniperBulletsContainer"]
+layout_mode = 2
+offset_right = 32.0
+offset_bottom = 32.0
+scale = Vector2(2, 2)
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = ExtResource("7_bgkyl")
+
+[node name="SniperBulletsBallsAmount" type="Label" parent="CanvasLayer/HudManager/SniperBulletsContainer"]
+layout_mode = 2
+offset_left = 81.0
+offset_top = 19.0
+offset_right = 124.0
+offset_bottom = 70.0
+theme_override_fonts/font = ExtResource("3_5dxoa")
+theme_override_font_sizes/font_size = 48
+text = "3"
+script = ExtResource("7_x173k")
 
 [node name="HealthContainer" type="Control" parent="CanvasLayer/HudManager"]
 layout_mode = 1

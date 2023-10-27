@@ -17,16 +17,27 @@ signal attackWithHarpoon
 @onready var map: Map = get_node('/root/GameManager/Map')
 @onready var playerSprite: Sprite2D = $"playerSprite"
 @onready var log: Label = get_node('/root/GameManager/CanvasLayer/HudManager/LOG')
+@onready var cannonAttackButton: CannonAttackButton = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/ButtonCannonAttack')
+@onready var sniperAttackButton: SniperAttackButton = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/ButtonSniperAttack')
+@onready var harpoonAttackButton: HarpoonAttackButton = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/ButtonHarpoonAttack')
+@onready var buttonTurnLeft: ButtonTurnLeft = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/TurnContainer/ButtonTurnLeft')
+@onready var buttonTurnRight: ButtonTurnRight = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/TurnContainer/ButtonTurnRight')
+@onready var currentCannonBallsAmountLabel: CurrentCannonBallsAmount = get_node('/root/GameManager/CanvasLayer/HudManager/CannonBallsContainer/CurrentCannonBallsAmount')
+@onready var currentSniperBulletsAmountLabel: CurrentSniperBulletsAmount = get_node('/root/GameManager/CanvasLayer/HudManager/SniperBulletsContainer/CurrentSniperBulletsAmount')
 
-@export var playerCannonDamage: float = 20 
-@export var playerSniperDamage: float = 30
-@export var playerHarpoonDamage: float = 10
-@export var maxHealth: float = 100 
-@export var cannonBallMaxAmount: float = 10
 @onready var currentHealth: float = maxHealth
 @onready var isAttackingWithCannon: bool = false
 @onready var isAttackingWithSniper: bool = false
 @onready var isAttackingWithHarpoon: bool = false
+
+@export var playerCannonDamage: float = 20 
+@export var playerSniperDamage: float = 30
+@export var playerHarpoonDamage: float = 10
+@export var maxCannonBallsAmount: float = 10
+@export var currentCannonBallsAmount: float = 10
+@export var maxSniperBulletsAmount: float = 3
+@export var currentSniperBulletsAmount: float = 3
+@export var maxHealth: float = 100 
 
 var currentTile
 var combatMode = false
@@ -92,6 +103,9 @@ func moveByMouseClick() -> void:
 
 func handleCannonAtack() -> void:
 	print('handleCannonAtack')
+	if currentCannonBallsAmount <= 0:
+		log.text = "OUT OF AMMO\n" + log.text # if miss the shot, it is shown on LOG
+		return
 	if (
 		gameManager.isPlayerTurn &&
 		Input.is_action_just_pressed('mouse_left') &&
@@ -105,22 +119,29 @@ func handleCannonAtack() -> void:
 			if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
 				if randi() % 100 <= 89: # has a 90% of chance of hitting target 
 					map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerCannonDamage)
+					currentCannonBallsAmount -= 1
+					currentCannonBallsAmountLabel.setText( str(currentCannonBallsAmount) )
 				else:
 					log.text = "MISS\n" + log.text # if miss the shot, it is shown on LOG
 			else: # if clicking in anything that has not a reference, LOG shows the clicked tile type
-				log.text = "SHOT ON " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + '\n' + log.text
+				log.text = "SHOT " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + '\n' + log.text # after refact i think this is never reached
 			#end ifelse
 			
 			attackWithCannon.emit(actionsToAttackWithCannon)
 		else:
-			log.text = "CANNOT ATTACK " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + ' WITH CANNON ' + '\n' + log.text
+			log.text = "CANNOT SHOT " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + ' WITH CANNON ' + '\n' + log.text
 		#end ifelse
+		enableButtons()
 		isAttackingWithCannon = false
 		map.cleanAttackTiles()
+		Button
 	#end if
 #end func handleCannonAtack
 
 func handleSniperAttack() -> void:
+	if currentSniperBulletsAmount <= 0:
+		log.text = "OUT OF AMMO\n" + log.text # if miss the shot, it is shown on LOG
+		return
 	if (
 		gameManager.isPlayerTurn &&
 		Input.is_action_just_pressed('mouse_left') &&
@@ -131,15 +152,20 @@ func handleSniperAttack() -> void:
 			if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
 				if randi() % 100 <= 19: # has a 20% of chance of hitting target 
 					map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerSniperDamage)
+					currentSniperBulletsAmount -= 1
+					currentSniperBulletsAmountLabel.setText( str(currentSniperBulletsAmount) )
 				else:
 					log.text = "MISS\n" + log.text # if miss the shot, it is shown on LOG
 			else: # if clicking in anything that has not a reference, LOG shows the clicked tile type
-				log.text = "SHOT ON " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + '\n' + log.text
+				log.text = "CANNOT SHOT " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + '\n' + log.text
 			
 			attackWithSniper.emit(actionsToAttackWithSniper)
 		else:
 			log.text = "CANNOT ATTACK " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + ' WITH SNIPER ' + '\n' + log.text
 		#end ifelse
+		
+		currentSniperBulletsAmount -= 1
+		enableButtons()
 		isAttackingWithSniper = false
 		map.cleanAttackTiles()
 		#end if
@@ -165,7 +191,7 @@ func handleHarpoonAttack() -> void:
 		else:
 			log.text = "CANNOT ATTACK " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + ' WITH HARPOON ' + '\n' + log.text
 		#end ifelse
-		
+		enableButtons()
 		isAttackingWithHarpoon = false
 		map.cleanAttackTiles()
 			
@@ -421,3 +447,11 @@ func handleRotate(direction: String):
 	
 	doAction.emit(actionsToMove)
 #end func handleRotate
+
+func enableButtons():
+	cannonAttackButton.enableButton()
+	sniperAttackButton.enableButton()
+	harpoonAttackButton.enableButton()
+	buttonTurnRight.enableButton()
+	buttonTurnLeft.enableButton()
+#end func enableButtons

@@ -14,7 +14,7 @@ signal finishedTurn
 @onready var player: Player = get_node('/root/GameManager/Player')
 @onready var map: Map = get_node('/root/GameManager/Map')
 @onready var gameManager: GameManager = get_node('/root/GameManager')
-@onready var log: Label = get_node('/root/GameManager/CanvasLayer/HudManager/LOG')
+@onready var myLOG: LOG = get_node('/root/GameManager/CanvasLayer/HudManager/LOG')
 @onready var self_node = $"."
 @onready var currentHealth: float = maxHealth
 @onready var currentGridPosition = map.getGridPosition(global_position)
@@ -47,12 +47,12 @@ func selfController():
 		return
 	if isPlayerNear():
 		attackPlayer()
-		log.text = "Island Enemy attacked\n" + log.text
+		myLOG.addLOG("ISLAND ENEMY ATTACKED")
 		actions -= 1
 		selfController()
 	else:
 		print('cant hurt player')
-		log.text = "Island Enemy finish turn\n" + log.text
+		myLOG.addLOG("ISLAND ENEMY FINISH TURN")
 		actions = maxActionsAmount
 		finishedTurn.emit()
 
@@ -64,6 +64,7 @@ func _process(_delta):
 #	hurtPlayer()'
 	if currentHealth <= 0:
 		destroyYourself()
+	#end if
 #end func _process
 
 func attackPlayer():
@@ -82,8 +83,8 @@ func destroyYourself():
 	queue_free()
 #end func destroyYourself
 
-func tookHit(damage: float):
-	currentHealth -= damage
+func tookHit(damageHit: float):
+	currentHealth -= damageHit
 	healthChanged.emit()
 #end func tookHit
 

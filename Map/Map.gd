@@ -8,7 +8,7 @@ extends TileMap
 @onready var enemyIsland = preload("res://Islands/EnemyIsland.tscn")
 
 @export var desertIslandAmount: int = 7
-@export var enemyIslandAmount: int = 4
+@export var enemyIslandAmount: int = 6
 
 var gridSize = 30
 var tileMapDict: Dictionary = {}

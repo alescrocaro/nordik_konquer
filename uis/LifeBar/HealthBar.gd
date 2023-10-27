@@ -1,4 +1,6 @@
+class_name PlayerHealthBar
 extends ProgressBar
+
 
 
 ########## VARS ##########
@@ -12,6 +14,7 @@ func _ready():
 	max_value = player.maxHealth
 	player.healthChanged.connect(update)
 	update()
+#end func _ready
 
 func update():
 	value = player.currentHealth
@@ -27,5 +30,6 @@ func update():
 		var sb = StyleBoxFlat.new()
 		add_theme_stylebox_override("fill", sb)
 		sb.bg_color = Color("ff0d00")
+	#end ifelse
 #end func update
 

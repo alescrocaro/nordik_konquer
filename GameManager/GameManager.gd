@@ -53,10 +53,10 @@ func handleIslandEnemies() -> void:
 #end func handleIslandEnemies
 
 func controller(actionAmountToDecrease: int) -> void:
-	print()
-	print('controller - isPlayerTurn: ', isPlayerTurn)
-	print('beforeactions: ', actions)
-	print('actionAmountToDecrease: ', actionAmountToDecrease)
+#	print()
+#	print('controller - isPlayerTurn: ', isPlayerTurn)
+#	print('beforeactions: ', actions)
+#	print('actionAmountToDecrease: ', actionAmountToDecrease)
 	if isPlayerTurn:
 #		handlePlayerDecision()
 
@@ -103,7 +103,7 @@ func controller(actionAmountToDecrease: int) -> void:
 #		#end while
 #	#end else
 	#end while
-	print('afteractions: ', actions)
+	#print('afteractions: ', actions)
 #end func controller
 
 func calculateDistance(point1: Vector2i, point2: Vector2i):
@@ -120,10 +120,10 @@ func calculateDistance(point1: Vector2i, point2: Vector2i):
 #end func calculateDistance
 
 func countFinishedEnemyTurn():
-	print('count')
+	#print('count')
 	islandEnemiesFinishedTurnAmount += 1
 	if islandEnemiesFinishedTurnAmount >= islandEnemies.size():
-		print('ai')
+	#	print('ai')
 		isPlayerTurn = true
 		islandEnemiesFinishedTurnAmount = 0
 		finishedEnemyTurn.emit()

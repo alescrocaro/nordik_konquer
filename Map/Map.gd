@@ -8,7 +8,8 @@ extends TileMap
 @onready var enemyIsland = preload("res://Islands/EnemyIsland.tscn")
 
 @export var desertIslandAmount: int = 7
-@export var enemyIslandAmount: int = 6
+@export var enemyIslandAmount: int = 8
+@export var swampAmount: int = 9
 
 var gridSize = 30
 var tileMapDict: Dictionary = {}
@@ -33,6 +34,7 @@ func _ready():
 			}
 		#end for y
 	#end for x
+	generateSwamp()
 	generateDesertIslands()
 	generateEnemyIslands()
 #end func _ready
@@ -50,7 +52,14 @@ func _process(_delta):
 #	):
 	for x in gridSize:
 		for y in gridSize:
+			var tileType = tileMapDict[ str(Vector2i(x,y)) ].type
 			erase_cell(1, Vector2i(x,y))
+			if tileType == 'Swamp':
+				set_cell(0, Vector2i(x,y), 6, Vector2i(0, 0))
+			else:
+				set_cell(0, Vector2i(x,y), 0, Vector2i(0, 0))
+#				erase_cell(1, Vector2i(x,y))
+			
 			#set warning tiles
 			if tileMapDict[ str(Vector2i(x,y)) ].warningAmount > 0:
 				set_cell(3, Vector2i(x,y), 5, Vector2i(0, 0))
@@ -64,8 +73,10 @@ func _process(_delta):
 		gameManager.isPlayerTurn
 	):
 		var targetPosition = player.getSelectablePositionToMove()
+		print('targetPosition', targetPosition)
 		if targetPosition:
 			if player.combatMode:
+				print(tileMapDict[ str(targetPosition) ])
 				if tileMapDict[ str(targetPosition) ].warningAmount > 0:
 					set_cell(1, targetPosition, 1, Vector2i(0, 0))
 			else:
@@ -95,22 +106,22 @@ func isNear(tilesAmount: int, tileType: String, tile) -> bool:
 	for x in range(tilesAmount):
 		for y in range(tilesAmount):
 			if (tileMapDict.has( str(tile.gridPosition + Vector2i(x,y)) ) ): 
-				if (tileMapDict[ str(tile.gridPosition + Vector2i(x,y)) ].type == tileType):
+				if (tileMapDict[ str(tile.gridPosition + Vector2i(x,y)) ].isPlayerAt if tileType == 'Player' else tileMapDict[ str(tile.gridPosition + Vector2i(x,y)) ].type == tileType):
 					return true
 				#end if
 			#end if
 			if (tileMapDict.has( str(tile.gridPosition + Vector2i(-x,-y)) ) ): 
-				if (tileMapDict[ str(tile.gridPosition + Vector2i(-x,-y)) ].type == tileType):
+				if (tileMapDict[ str(tile.gridPosition + Vector2i(-x,-y)) ].isPlayerAt if tileType == 'Player' else tileMapDict[ str(tile.gridPosition + Vector2i(-x,-y)) ].type == tileType):
 					return true
 				#end if
 			#end if
 			if (tileMapDict.has( str(tile.gridPosition + Vector2i(x,-y)) ) ): 
-				if (tileMapDict[ str(tile.gridPosition + Vector2i(x,-y)) ].type == tileType):
+				if (tileMapDict[ str(tile.gridPosition + Vector2i(x,-y)) ].isPlayerAt if tileType == 'Player' else tileMapDict[ str(tile.gridPosition + Vector2i(x,-y)) ].type == tileType):
 					return true
 				#end if
 			#end if
 			if (tileMapDict.has( str(tile.gridPosition + Vector2i(-x,y)) ) ): 
-				if (tileMapDict[ str(tile.gridPosition + Vector2i(-x,y)) ].type == tileType):
+				if (tileMapDict[ str(tile.gridPosition + Vector2i(-x,y)) ].isPlayerAt if tileType == 'Player' else tileMapDict[ str(tile.gridPosition + Vector2i(-x,y)) ].type == tileType):
 					return true
 				#end if
 			#end if
@@ -135,7 +146,7 @@ func isNear(tilesAmount: int, tileType: String, tile) -> bool:
 func setAvailableCannonAttacks():##### TODO REFACTORING - MERGE setAvailableAttacks FUNCTIONS
 	var availableAttackTiles: PackedVector2Array = player.getAvailableCannonAttackTiles()
 	for availableTile in availableAttackTiles:
-		set_cell(2, availableTile, 4, Vector2i(0, 0))
+		set_cell(1, availableTile, 4, Vector2i(0, 0))
 	#end for
 #end func setAvailableCannonAttacks
 
@@ -164,18 +175,38 @@ func cleanAttackTiles():
 func setWarningTiles(gridPosition: Vector2i, tileAmount):
 	for x in tileAmount+1:
 		for y in tileAmount+1:
-			if tileMapDict.has( str(gridPosition + Vector2i(x, y)) ) && tileMapDict[str(gridPosition + Vector2i(x, y)) ].type == 'Ocean':
+			if (
+				tileMapDict.has( str(gridPosition + Vector2i(x, y)) ) && (
+					tileMapDict[str(gridPosition + Vector2i(x, y)) ].type == 'Ocean' ||
+					tileMapDict[str(gridPosition + Vector2i(x, y)) ].type == 'Swamp'
+				)
+			):
 				tileMapDict[ str(gridPosition + Vector2i(x, y)) ].warningAmount += 1
 			#end if
-			if tileMapDict.has( str(gridPosition + Vector2i(-x, y)) ) && tileMapDict[str(gridPosition + Vector2i(-x, y)) ].type == 'Ocean':
+			if (
+				tileMapDict.has( str(gridPosition + Vector2i(-x, y)) ) && (
+					tileMapDict[str(gridPosition + Vector2i(-x, y)) ].type == 'Ocean' ||
+					tileMapDict[str(gridPosition + Vector2i(-x, y)) ].type == 'Swamp'
+				)
+			):
 				tileMapDict[ str(gridPosition + Vector2i(-x, y)) ].warningAmount += 1
 			#end if
 
-			if tileMapDict.has( str(gridPosition + Vector2i(x, -y)) ) && tileMapDict[str(gridPosition + Vector2i(x, -y)) ].type == 'Ocean':
+			if (
+				tileMapDict.has( str(gridPosition + Vector2i(x, -y)) ) && (
+					tileMapDict[str(gridPosition + Vector2i(x, -y)) ].type == 'Ocean' ||
+					tileMapDict[str(gridPosition + Vector2i(x, -y)) ].type == 'Swamp'
+				)
+			):
 				tileMapDict[ str(gridPosition + Vector2i(x, -y)) ].warningAmount += 1
 			#end if
 
-			if tileMapDict.has( str(gridPosition + Vector2i(-x, -y)) ) && tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Ocean':
+			if (
+				tileMapDict.has( str(gridPosition + Vector2i(-x, -y)) ) && (
+					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Ocean' ||
+					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Swamp'
+				)
+			):
 				tileMapDict[ str(gridPosition + Vector2i(-x, -y)) ].warningAmount += 1
 			#end if
 		#end for y
@@ -188,7 +219,8 @@ func removeWarningTiles(gridPosition: Vector2i, tileAmount):
 			if (
 				tileMapDict.has( str(gridPosition + Vector2i(x, y)) ) && (
 					tileMapDict[str(gridPosition + Vector2i(x, y)) ].type == 'Ocean' || 
-					tileMapDict[str(gridPosition + Vector2i(x, y)) ].type == 'Player'
+					tileMapDict[str(gridPosition + Vector2i(x, y)) ].type == 'Swamp' || 
+					tileMapDict[str(gridPosition + Vector2i(x, y)) ].isPlayerAt
 				)
 			):
 				tileMapDict[ str(gridPosition + Vector2i(x, y)) ].warningAmount -= 1
@@ -197,7 +229,8 @@ func removeWarningTiles(gridPosition: Vector2i, tileAmount):
 			if (
 				tileMapDict.has( str(gridPosition + Vector2i(-x, y)) ) && (
 					tileMapDict[str(gridPosition + Vector2i(-x, y)) ].type == 'Ocean' ||
-					tileMapDict[str(gridPosition + Vector2i(-x, y)) ].type == 'Player'
+					tileMapDict[str(gridPosition + Vector2i(-x, y)) ].type == 'Swamp' || 
+					tileMapDict[str(gridPosition + Vector2i(-x, y)) ].isPlayerAt
 				)
 			):
 				tileMapDict[ str(gridPosition + Vector2i(-x, y)) ].warningAmount -= 1
@@ -206,7 +239,8 @@ func removeWarningTiles(gridPosition: Vector2i, tileAmount):
 			if (
 				tileMapDict.has( str(gridPosition + Vector2i(x, -y)) ) && (
 					tileMapDict[str(gridPosition + Vector2i(x, -y)) ].type == 'Ocean' ||
-					tileMapDict[str(gridPosition + Vector2i(x, -y)) ].type == 'Player'
+					tileMapDict[str(gridPosition + Vector2i(x, -y)) ].type == 'Swamp' || 
+					tileMapDict[str(gridPosition + Vector2i(x, -y)) ].isPlayerAt
 				)
 			):
 				tileMapDict[ str(gridPosition + Vector2i(x, -y)) ].warningAmount -= 1
@@ -215,7 +249,8 @@ func removeWarningTiles(gridPosition: Vector2i, tileAmount):
 			if (
 				tileMapDict.has( str(gridPosition + Vector2i(-x, -y)) ) && (
 					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Ocean' ||
-					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Player'
+					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].type == 'Swamp' || 
+					tileMapDict[str(gridPosition + Vector2i(-x, -y)) ].isPlayerAt
 				)
 			):
 				tileMapDict[ str(gridPosition + Vector2i(-x, -y)) ].warningAmount -= 1
@@ -305,3 +340,45 @@ func generateEnemyIslands() -> void:
 		#end if
 	#end while
 #end func generateEnemyIslands
+
+func generateSwamp() -> void:
+	print('generateSwamp')
+	var swampCount: int = 0
+	var swampCountIterations: int = 0
+	var rangeToSpawn: int = 7 
+
+	while true:
+		if swampCount >= swampAmount:
+			break
+		#end if
+
+		#check if there is too many iterations and didnt find a position available
+		if (swampCountIterations >= 3 * swampAmount):
+			swampCountIterations = 0
+			rangeToSpawn -= 1
+			if rangeToSpawn == 0:
+				break
+		#end if
+
+		var swampTile = getRandomTile()
+
+		#check if random position is near another tile with this node
+		if (
+			swampCount > 0 &&
+			isNear(rangeToSpawn, 'Swamp', swampTile)
+		):
+			continue
+		#end if
+
+		#instantiate node if found a good ocean tile
+		if tileMapDict[str(swampTile.gridPosition)].type == 'Ocean':
+			swampCount += 1
+
+			tileMapDict[str(swampTile.gridPosition)].type = 'Swamp'
+
+#			gameManager.islandEnemies[ str(swampTile.gridPosition) ] = tileMapDict[ str(swampTile.gridPosition) ]
+#			setWarningTiles(swampTile.gridPosition, 2)
+			set_cell(1, swampTile.gridPosition, 6, Vector2i(0, 0))
+		#end if
+	#end while
+#end func generateSwamps

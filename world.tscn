@@ -93,6 +93,8 @@ layer_1/z_index = 0
 
 [node name="Islands" type="Node2D" parent="."]
 
+[node name="Obstacle" type="Node2D" parent="."]
+
 [node name="Enemies" type="Node2D" parent="."]
 
 [node name="Sharks" type="Node2D" parent="Enemies"]

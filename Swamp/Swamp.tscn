@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://1jnsqamo7mkp"]
+
+[ext_resource type="Script" path="res://Swamp/Swamp.gd" id="1_wpm71"]
+[ext_resource type="Texture2D" uid="uid://ce4nw02enq7ct" path="res://assets/swamp.png" id="2_rem1q"]
+
+[node name="Swamp" type="Node2D"]
+script = ExtResource("1_wpm71")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_rem1q")

@@ -46,6 +46,7 @@ var sniperRangePositions = range(-3, 4, 1)
 var harpoonRangePositions = range(1, 3, 1)
 var spriteFrames = [0, 1, 2, 3]
 var actionsToMove = 1
+var actionsToMoveFromSwamp = 2
 var actionsToAttackWithCannon = 2
 var actionsToAttackWithSniper = 4
 var actionsToAttackWithHarpoon = 2
@@ -59,7 +60,7 @@ func _ready():
 		if currentTile.type == 'Ocean':
 			self.global_position = Vector2i(map.getGlobalPosition(currentTile.gridPosition)) + Vector2i(1, -12)
 			map.tileMapDict[str(currentTile.gridPosition)].isPlayerAt = true
-			map.tileMapDict[str(currentTile.gridPosition)].type = 'Player'
+#			map.tileMapDict[str(currentTile.gridPosition)].type = 'Player'
 			playerSprite.set_frame(randi() % 4)
 			break
 		#end if
@@ -78,8 +79,7 @@ func _process(_delta):
 			print('isAttackingWithHarpoon')
 			handleHarpoonAttack()
 		else:
-			if hasEnoughActionsLeft('MOVE'):
-				moveByMouseClick()
+			moveByMouseClick()
 		#end ifelifelse
 	#end if
 #end func _process
@@ -90,15 +90,24 @@ func moveByMouseClick() -> void:
 		Input.is_action_just_pressed('mouse_left') && 
 		canSelectPositionToMove()
 	):
-		if combatMode:
-			if map.tileMapDict[ str(map.selectedGridPosition) ].warningAmount > 0:
+		var moveDict = {
+			'moveType': 'MOVE_FROM_SWAMP' if currentTile.type == 'Swamp' else 'MOVE',
+			'actions': actionsToMoveFromSwamp if currentTile.type == 'Swamp' else actionsToMove,
+		}
+		if hasEnoughActionsLeft(moveDict.moveType):
+			if combatMode:
+				if map.tileMapDict[ str(map.selectedGridPosition) ].warningAmount > 0:
+					self.global_position = Vector2i(map.selectedGlobalPosition) + Vector2i(1, -12)
+					currentTile = updatePosition(currentTile)
+					doAction.emit(moveDict.actions)
+				#end if
+			else:
 				self.global_position = Vector2i(map.selectedGlobalPosition) + Vector2i(1, -12)
 				currentTile = updatePosition(currentTile)
-				doAction.emit(actionsToMove)
+				doAction.emit(moveDict.actions)
+			#end ifelse
 		else:
-			self.global_position = Vector2i(map.selectedGlobalPosition) + Vector2i(1, -12)
-			currentTile = updatePosition(currentTile)
-			doAction.emit(actionsToMove)
+			myLOG.addLOG('NOT ENOUGH ACTIONS')
 		#end ifelse
 	#end if
 #end func moveByMouseClick
@@ -201,10 +210,12 @@ func updatePosition(tile):
 	
 	var selectedGridTile = map.tileMapDict[ str(map.selectedGridPosition) ]
 	map.tileMapDict[ str( selectedGridTile.gridPosition ) ].isPlayerAt = true
-	map.tileMapDict[ str( selectedGridTile.gridPosition ) ].type = "Player"
+#	map.tileMapDict[ str( selectedGridTile.gridPosition ) ].type = "Player"
 	
 	changeFrame(tile, selectedGridTile)
 	currentTile = selectedGridTile
+	
+	print(tile)
 
 	return selectedGridTile
 #end func updatePosition
@@ -223,30 +234,43 @@ func changeFrame(tile, newTile) -> void:
 
 func getSelectablePositionToMove():
 	if !isAttackingWithCannon && !isAttackingWithSniper && !isAttackingWithHarpoon: ##### TODO REFACTORING - only 1 var isAttacking
+		print(map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ])
 		if (
 			map.tileMapDict.has( str( currentTile.gridPosition - Vector2i(0,-1) ) ) &&
-			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Ocean' &&
+			(
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Ocean' ||
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Swamp'
+			) &&
 			playerSprite.get_frame() == 0
 		):
 			return currentTile.gridPosition - Vector2i(0,-1)
 		#end if
 		if (
 			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-1,0)) ) &&
-			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(-1,0)) ].type == 'Ocean' &&
+			(
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(-1,0)) ].type == 'Ocean' ||
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(-1,0)) ].type == 'Swamp'
+			) &&
 			playerSprite.get_frame() == 1
 		):
 			return currentTile.gridPosition - Vector2i(-1,0)
 		#end if
 		if(
 			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,1)) ) &&
-			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,1)) ].type == 'Ocean' &&
+			(
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,1)) ].type == 'Ocean' ||
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,1)) ].type == 'Swamp'
+			) &&
 			playerSprite.get_frame() == 2
 		):
 			return currentTile.gridPosition - Vector2i(0,1)
 		#end if
 		if( 
 			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(1,0)) ) &&
-			map.tileMapDict[ str(currentTile.gridPosition - Vector2i(1,0)) ].type == 'Ocean' &&
+			(
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(1,0)) ].type == 'Ocean' ||
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(1,0)) ].type == 'Swamp'
+			) &&
 			playerSprite.get_frame() == 3
 		):
 			return currentTile.gridPosition - Vector2i(1,0)
@@ -261,7 +285,10 @@ func canSelectPositionToMove() -> bool:
 		map.tileMapDict.has( str(map.selectedGridPosition) )
 	):
 		var tile = map.tileMapDict[ str(map.selectedGridPosition) ]
-		if (map.tileMapDict[ str(tile.gridPosition) ].type == 'Ocean'):
+		if (
+			map.tileMapDict[ str(tile.gridPosition) ].type == 'Ocean' ||
+			map.tileMapDict[ str(tile.gridPosition) ].type == 'Swamp'
+		):
 			if (
 				map.tileMapDict.has( str(tile.gridPosition - Vector2i(0,1)) ) && (
 					map.tileMapDict[ str(tile.gridPosition - Vector2i(0,1)) ].isPlayerAt &&
@@ -480,7 +507,11 @@ func hasEnoughActionsLeft(type: String) -> bool:
 				return false
 			return true
 		'MOVE':
-			if !(gameManager.actions > 0):
+			if actionsToMove > gameManager.actions:
+				return false
+			return true
+		'MOVE_FROM_SWAMP':
+			if actionsToMoveFromSwamp > gameManager.actions:
 				return false
 			return true
 		_: # default

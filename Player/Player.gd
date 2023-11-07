@@ -234,7 +234,6 @@ func changeFrame(tile, newTile) -> void:
 
 func getSelectablePositionToMove():
 	if !isAttackingWithCannon && !isAttackingWithSniper && !isAttackingWithHarpoon: ##### TODO REFACTORING - only 1 var isAttacking
-		print(map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ])
 		if (
 			map.tileMapDict.has( str( currentTile.gridPosition - Vector2i(0,-1) ) ) &&
 			(

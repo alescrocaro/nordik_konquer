@@ -15,6 +15,17 @@ var gridSize = 30
 var tileMapDict: Dictionary = {}
 var selectedGlobalPosition: Vector2i
 var selectedGridPosition: Vector2i
+var oceanLayer: int = 0
+var selectionLayer: int = 1
+var attackLayer: int = 2
+var warningLayer: int = 3
+var oceanSourceID: int = 0
+var selectionSourceID: int = 1
+var desertIslandSourceID: int = 2
+var enemyIslandSourceID: int = 3
+var attackSelectionSourceID: int = 4
+var warningSourceID: int = 5
+var swampSourceID: int = 6
 
 
 
@@ -22,7 +33,7 @@ var selectedGridPosition: Vector2i
 func _ready():
 	for x in gridSize:
 		for y in gridSize:
-			set_cell(0, Vector2i(x, y), 0, Vector2i(0, 0), 0)
+			set_cell(oceanLayer, Vector2i(x, y), oceanSourceID, Vector2i(0, 0), 0)
 			tileMapDict[str(Vector2i(x, y))] = { 
 				"type": "Ocean", 
 				"gridPosition": Vector2i(x, y), 
@@ -55,14 +66,14 @@ func _process(_delta):
 			var tileType = tileMapDict[ str(Vector2i(x,y)) ].type
 			erase_cell(1, Vector2i(x,y))
 			if tileType == 'Swamp':
-				set_cell(0, Vector2i(x,y), 6, Vector2i(0, 0))
+				set_cell(oceanLayer, Vector2i(x,y), swampSourceID, Vector2i(0, 0))
 			else:
-				set_cell(0, Vector2i(x,y), 0, Vector2i(0, 0))
+				set_cell(oceanLayer, Vector2i(x,y), oceanSourceID, Vector2i(0, 0))
 #				erase_cell(1, Vector2i(x,y))
 			
 			#set warning tiles
 			if tileMapDict[ str(Vector2i(x,y)) ].warningAmount > 0:
-				set_cell(3, Vector2i(x,y), 5, Vector2i(0, 0))
+				set_cell(warningLayer, Vector2i(x,y), warningSourceID, Vector2i(0, 0))
 			else: # if tile has no warningAmount, erase cell to turn it back into ocean
 				erase_cell(3, Vector2i(x,y))
 			#end ifelse
@@ -73,14 +84,12 @@ func _process(_delta):
 		gameManager.isPlayerTurn
 	):
 		var targetPosition = player.getSelectablePositionToMove()
-		print('targetPosition', targetPosition)
 		if targetPosition:
 			if player.combatMode:
-				print(tileMapDict[ str(targetPosition) ])
 				if tileMapDict[ str(targetPosition) ].warningAmount > 0:
-					set_cell(1, targetPosition, 1, Vector2i(0, 0))
+					set_cell(selectionLayer, targetPosition, selectionSourceID, Vector2i(0, 0))
 			else:
-				set_cell(1, targetPosition, 1, Vector2i(0, 0))
+				set_cell(selectionLayer, targetPosition, selectionSourceID, Vector2i(0, 0))
 			#end ifelse
 		#end if
 	#end if
@@ -139,28 +148,28 @@ func isNear(tilesAmount: int, tileType: String, tile) -> bool:
 #	}
 #	var availableAttackTiles: PackedVector2Array = types[attackType].call()
 #	for availableTile in availableAttackTiles:
-#		set_cell(2, availableTile, 4, Vector2i(0, 0))
+#		set_cell(attackLayer, availableTile, attackSelectionSourceID, Vector2i(0, 0))
 #	#end for
 ##end func setAvailableTilesToAttack
 
 func setAvailableCannonAttacks():##### TODO REFACTORING - MERGE setAvailableAttacks FUNCTIONS
 	var availableAttackTiles: PackedVector2Array = player.getAvailableCannonAttackTiles()
 	for availableTile in availableAttackTiles:
-		set_cell(1, availableTile, 4, Vector2i(0, 0))
+		set_cell(attackLayer, availableTile, attackSelectionSourceID, Vector2i(0, 0))
 	#end for
 #end func setAvailableCannonAttacks
 
 func setAvailableSniperAttacks():##### TODO REFACTORING - MERGE setAvailableAttacks FUNCTIONS
 	var availableAttackTiles: PackedVector2Array = player.getAvailableSniperAttackTiles()
 	for availableTile in availableAttackTiles:
-		set_cell(2, availableTile, 4, Vector2i(0, 0))
+		set_cell(attackLayer, availableTile, attackSelectionSourceID, Vector2i(0, 0))
 	#end for
 #end func setAvailableSniperAttacks
 
 func setAvailableHarpoonAttacks():##### TODO REFACTORING - MERGE setAvailableAttacks FUNCTIONS
 	var availableAttackTiles: PackedVector2Array = player.getAvailableHarpoonAttackTiles()
 	for availableTile in availableAttackTiles:
-		set_cell(2, availableTile, 4, Vector2i(0, 0))
+		set_cell(attackLayer, availableTile, attackSelectionSourceID, Vector2i(0, 0))
 	#end for
 #end func setAvailableHarpoonAttacks
 
@@ -342,10 +351,9 @@ func generateEnemyIslands() -> void:
 #end func generateEnemyIslands
 
 func generateSwamp() -> void:
-	print('generateSwamp')
 	var swampCount: int = 0
 	var swampCountIterations: int = 0
-	var rangeToSpawn: int = 7 
+	var rangeToSpawn: int = 7
 
 	while true:
 		if swampCount >= swampAmount:
@@ -373,12 +381,53 @@ func generateSwamp() -> void:
 		#instantiate node if found a good ocean tile
 		if tileMapDict[str(swampTile.gridPosition)].type == 'Ocean':
 			swampCount += 1
-
+#			generateSwampProcedurally(swampTile)
 			tileMapDict[str(swampTile.gridPosition)].type = 'Swamp'
-
-#			gameManager.islandEnemies[ str(swampTile.gridPosition) ] = tileMapDict[ str(swampTile.gridPosition) ]
-#			setWarningTiles(swampTile.gridPosition, 2)
-			set_cell(1, swampTile.gridPosition, 6, Vector2i(0, 0))
+			set_cell(oceanLayer, swampTile.gridPosition, swampSourceID, Vector2i(0, 0))
 		#end if
 	#end while
 #end func generateSwamps
+
+func generateSwampProcedurally(swampTile):
+	var swampSpread = 4
+	var spreadedSwampTile = swampTile
+	for i in range(0, swampSpread):
+		tileMapDict[str(spreadedSwampTile.gridPosition)].type = 'Swamp'
+
+		set_cell(oceanLayer, spreadedSwampTile.gridPosition, swampSourceID, Vector2i(0, 0))
+		var maxIters = 6*swampSpread
+		var currIter = 0
+		while true:
+			if currIter >= maxIters:
+				break
+			#end if
+			var newRandomTile = getRandomTileNear(spreadedSwampTile, 2)
+			print('newRandomTile', newRandomTile)
+			if newRandomTile && newRandomTile.type == 'Ocean':
+				spreadedSwampTile = newRandomTile
+				break
+			#end if
+			currIter += 1
+			#end while
+#end func generateSwampProcedurally
+
+func getRandomTileNear(tile, rangeToFind):
+	var maxIters = 6*4
+	var currIter = 0
+
+	while true:
+		if currIter >= maxIters:
+			break
+		var randomX = randi() % (rangeToFind+1)
+		var randomY = randi() % (rangeToFind+1)
+		var isXPositive = randi() % 2 == 1
+		var isYPositive = randi() % 2 == 1
+		if tileMapDict.has( str(Vector2i(tile.gridPosition.x+randomX if isXPositive else tile.gridPosition.x-randomX, tile.gridPosition.y+randomY if isYPositive else tile.gridPosition.y-randomY)) ):
+			return tileMapDict[ str(Vector2i(tile.gridPosition.x+randomX if isXPositive else tile.gridPosition.x-randomX, tile.gridPosition.y+randomY if isYPositive else tile.gridPosition.y-randomY)) ]
+		#end if
+		
+		currIter += 1
+	#end while
+	
+	return null
+#end func getRandomTileNear

@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://tmjt5ytuo4dy"]
+[gd_scene load_steps=42 format=3 uid="uid://tmjt5ytuo4dy"]
 
 [ext_resource type="PackedScene" uid="uid://d1mfomqp1sk7t" path="res://Map/Map.tscn" id="1_a88kt"]
 [ext_resource type="Script" path="res://GameManager/GameManager.gd" id="1_r4irp"]
@@ -6,7 +6,9 @@
 [ext_resource type="FontFile" uid="uid://7lq4ug78jinv" path="res://assets/nordicfont/Tundra.ttf" id="3_5dxoa"]
 [ext_resource type="Texture2D" uid="uid://cv8tqac4p0mi6" path="res://assets/heart.png" id="3_6sqqt"]
 [ext_resource type="Texture2D" uid="uid://xwu7052q40t2" path="res://assets/cannon_balls.png" id="4_a4ufl"]
+[ext_resource type="Texture2D" uid="uid://b5xn7n5eo2nd1" path="res://assets/wind_rose.png" id="4_s1wba"]
 [ext_resource type="Texture2D" uid="uid://npfb47hvjsxh" path="res://assets/card_turn_to_right.png" id="5_3v2ww"]
+[ext_resource type="Script" path="res://WindRoseSprite.gd" id="5_bblci"]
 [ext_resource type="Script" path="res://uis/LifeBar/HealthBar.gd" id="5_vy3pq"]
 [ext_resource type="Script" path="res://uis/CurrentCannonBallsAmount.gd" id="6_8ure4"]
 [ext_resource type="Texture2D" uid="uid://b6clclg03sj5l" path="res://assets/card_turn_to_left.png" id="6_hhyxh"]
@@ -110,6 +112,23 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="WindRoseContainer" type="Control" parent="CanvasLayer/HudManager"]
+custom_minimum_size = Vector2(128, 128)
+anchors_preset = 0
+offset_left = 1417.0
+offset_top = 36.0
+offset_right = 1545.0
+offset_bottom = 164.0
+
+[node name="WindRoseSprite" type="Sprite2D" parent="CanvasLayer/HudManager/WindRoseContainer"]
+position = Vector2(64, 64)
+rotation = 0.436332
+scale = Vector2(2, 2)
+skew = 0.698132
+texture = ExtResource("4_s1wba")
+hframes = 5
+script = ExtResource("5_bblci")
 
 [node name="CannonBallsContainer" type="Control" parent="CanvasLayer/HudManager"]
 layout_mode = 3

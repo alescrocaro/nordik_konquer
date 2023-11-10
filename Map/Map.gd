@@ -89,6 +89,7 @@ func _process(_delta):
 				if tileMapDict[ str(targetPosition) ].warningAmount > 0:
 					set_cell(selectionLayer, targetPosition, selectionSourceID, Vector2i(0, 0))
 			else:
+				print(targetPosition)
 				set_cell(selectionLayer, targetPosition, selectionSourceID, Vector2i(0, 0))
 			#end ifelse
 		#end if
@@ -381,9 +382,9 @@ func generateSwamp() -> void:
 		#instantiate node if found a good ocean tile
 		if tileMapDict[str(swampTile.gridPosition)].type == 'Ocean':
 			swampCount += 1
-#			generateSwampProcedurally(swampTile)
-			tileMapDict[str(swampTile.gridPosition)].type = 'Swamp'
-			set_cell(oceanLayer, swampTile.gridPosition, swampSourceID, Vector2i(0, 0))
+			generateSwampProcedurally(swampTile)
+#			tileMapDict[str(swampTile.gridPosition)].type = 'Swamp'
+#			set_cell(oceanLayer, swampTile.gridPosition, swampSourceID, Vector2i(0, 0))
 		#end if
 	#end while
 #end func generateSwamps

@@ -16,22 +16,30 @@ signal enemyCanAct
 @onready var map: Map = get_node('./Map')
 @onready var player: Player = get_node('./Player')
 @onready var enemyIsland = get_node('./Islands/EnemyIsland')
+@onready var windRoseSprite: WindRose =  get_node('./CanvasLayer/HudManager/WindRoseContainer/WindRoseSprite')
 #@onready var desertIsland = preload("res://Islands/DesertIsland.tscn")
 #@onready var enemyIsland = preload("res://Islands/EnemyIsland.tscn")
 
 @export var desertIslandAmount: int = 7
 @export var enemyIslandAmount: int = 4
+var windDirection = null
+var possibleWindDirections = [null, 'N', 'L', 'S', 'O']
 
 var isPlayerTurn = true
 var maxActions = 15
 var actions = maxActions
 var islandEnemies: Dictionary = {}
 var islandEnemiesFinishedTurnAmount = 0
+var countPlayerTurns = 0
 
 
 
 ########## FUNCS ##########
 func _ready():
+	var initialWindDirection = randi() % 6
+	windDirection = possibleWindDirections[initialWindDirection]
+	windRoseSprite.changeFrame(windDirection)
+	
 	startedPlayerTurn.emit()
 	player.doAction.connect(controller, 1)
 	player.attackWithCannon.connect(controller, 1)
@@ -44,6 +52,8 @@ func _ready():
 #	finishedEnemyTurn.connect(controller)
 #end func _ready
 
+#func _process(_delta):
+#	print(windDirection)
 func handlePlayerDecision() -> void:
 	print('-handlePlayerDecision')
 #end func handlePlayerDecision
@@ -63,6 +73,8 @@ func controller(actionAmountToDecrease: int) -> void:
 		actions -= actionAmountToDecrease
 		if actions < 1:
 			print('finishedPlayerTurn')
+			countPlayerTurns += 1
+			changeWindDirection()
 			isPlayerTurn = false
 			actions = maxActions
 			finishedPlayerTurn.emit()
@@ -130,3 +142,23 @@ func countFinishedEnemyTurn():
 		startedPlayerTurn.emit()
 	#end if
 #end func countFinishedEnemyTurn
+
+func changeWindDirection():
+	if countPlayerTurns % 3 == 0:
+		var randomX = randi() % 2
+		var randomY = randi() % 2
+		var isXPositive = randi() % 2 == 1
+		var isYPositive = randi() % 2 == 1
+		
+		match Vector2i(randomX if isXPositive else -randomX, randomY if isYPositive else -randomY):
+			Vector2i(1,0):
+				windDirection = 'N'
+			Vector2i(0,1):
+				windDirection = 'L'
+			Vector2i(-1,0):
+				windDirection = 'S'
+			Vector2i(0,-1):
+				windDirection = 'O'
+
+		windRoseSprite.changeFrame(windDirection)
+#end func changeWindDirection

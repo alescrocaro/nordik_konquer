@@ -89,7 +89,6 @@ func _process(_delta):
 				if tileMapDict[ str(targetPosition) ].warningAmount > 0:
 					set_cell(selectionLayer, targetPosition, selectionSourceID, Vector2i(0, 0))
 			else:
-				print(targetPosition)
 				set_cell(selectionLayer, targetPosition, selectionSourceID, Vector2i(0, 0))
 			#end ifelse
 		#end if

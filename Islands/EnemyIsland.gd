@@ -5,7 +5,6 @@ extends Node2D
 
 ######### SIGNALS #########
 signal healthChanged
-signal doAction
 signal finishedTurn
 
 
@@ -32,15 +31,12 @@ func _ready():
 	currentHealth = maxHealth
 	healthChanged.emit()
 	
-#	gameManager.startedEnemyTurn.connect(isPlayerNear)
 	gameManager.finishedPlayerTurn.connect(selfController)
-	gameManager.enemyCanAct.connect(selfController)
 #end func _ready
 
 
 
 func selfController():
-	print('selfController')
 	if actions < 1:
 		finishedTurn.emit()
 		actions = maxActionsAmount
@@ -70,7 +66,6 @@ func _process(_delta):
 func attackPlayer():
 	print('attacking player')
 	player.hurtByEnemy(damage)
-#	doAction.emit()
 #end func hurtPlayer
 
 func destroyYourself():

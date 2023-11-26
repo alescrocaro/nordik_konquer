@@ -41,6 +41,7 @@ signal attackWithHarpoon
 @export var maxHealth: float = 100 
 
 var currentTile
+var currentMovingDirection = 'N'
 var combatMode = false
 var sniperRangePositions = range(-3, 4, 1)
 var harpoonRangePositions = range(1, 3, 1)
@@ -50,18 +51,30 @@ var actionsToMoveFromSwamp = 2
 var actionsToAttackWithCannon = 2
 var actionsToAttackWithSniper = 4
 var actionsToAttackWithHarpoon = 2
+var possibleWindDirections
 
 
 
 ######### FUNCS #########
 func _ready():
+	possibleWindDirections = gameManager.possibleWindDirections
 	while true:
 		currentTile = map.getRandomTile()
 		if currentTile.type == 'Ocean':
 			self.global_position = Vector2i(map.getGlobalPosition(currentTile.gridPosition)) + Vector2i(1, -12)
 			map.tileMapDict[str(currentTile.gridPosition)].isPlayerAt = true
 #			map.tileMapDict[str(currentTile.gridPosition)].type = 'Player'
-			playerSprite.set_frame(randi() % 4)
+			var directionFrame = randi() % 4
+			playerSprite.set_frame(directionFrame)
+			match directionFrame:
+				0:
+					currentMovingDirection = 'S'
+				1:
+					currentMovingDirection = 'L'
+				2:
+					currentMovingDirection = 'N'
+				3:
+					currentMovingDirection = 'O'
 			break
 		#end if
 	#end while
@@ -90,25 +103,32 @@ func moveByMouseClick() -> void:
 		Input.is_action_just_pressed('mouse_left') && 
 		canSelectPositionToMove()
 	):
+		var actionsAmount = actionsToMoveFromSwamp if currentTile.type == 'Swamp' else actionsToMove
+		
+		if not isMovingInWindDirection():
+			actionsAmount *= 2 
+		
 		var moveDict = {
 			'moveType': 'MOVE_FROM_SWAMP' if currentTile.type == 'Swamp' else 'MOVE',
-			'actions': actionsToMoveFromSwamp if currentTile.type == 'Swamp' else actionsToMove,
+			'actions': actionsAmount,
 		}
-		if hasEnoughActionsLeft(moveDict.moveType):
+		if hasEnoughActionsLeft(moveDict.moveType, actionsAmount):
 			if combatMode:
-				if map.tileMapDict[ str(map.selectedGridPosition) ].warningAmount > 0:
+				if map.tileMapDict[ str(map.selectedGridPosition) ].warningAmount > 0: # if target position is warning tile, can move
 					self.global_position = Vector2i(map.selectedGlobalPosition) + Vector2i(1, -12)
 					currentTile = updatePosition(currentTile)
 					doAction.emit(moveDict.actions)
 				#end if
+			#end if
 			else:
 				self.global_position = Vector2i(map.selectedGlobalPosition) + Vector2i(1, -12)
 				currentTile = updatePosition(currentTile)
 				doAction.emit(moveDict.actions)
-			#end ifelse
+			#end else
+		#end if
 		else:
 			myLOG.addLOG('NOT ENOUGH ACTIONS')
-		#end ifelse
+		#end else
 	#end if
 #end func moveByMouseClick
 
@@ -206,7 +226,8 @@ func handleHarpoonAttack() -> void:
 
 func updatePosition(tile):
 	map.tileMapDict[ str( tile.gridPosition ) ].isPlayerAt = false
-	map.tileMapDict[ str( tile.gridPosition ) ].type = "Ocean"
+	if map.tileMapDict[ str( tile.gridPosition ) ].type != 'Swamp':
+		map.tileMapDict[ str( tile.gridPosition ) ].type = "Ocean"
 	
 	var selectedGridTile = map.tileMapDict[ str(map.selectedGridPosition) ]
 	map.tileMapDict[ str( selectedGridTile.gridPosition ) ].isPlayerAt = true
@@ -468,6 +489,8 @@ func handleRotate(direction: String) -> void:
 
 	playerSprite.set_frame(frame)
 	
+	updateMovingDirection(direction)
+	
 	doAction.emit(actionsToMove)
 #end func handleRotate
 
@@ -490,7 +513,7 @@ func updateCannonBallsAmount() -> void:
 	currentCannonBallsAmountLabel.setText( str(currentCannonBallsAmount) )
 #end func updateCannonBallsAmount
 
-func hasEnoughActionsLeft(type: String) -> bool:
+func hasEnoughActionsLeft(type: String, moveActionsAmount: int = 0) -> bool:
 	match type: # switch
 		'CANNON':
 			if actionsToAttackWithCannon > gameManager.actions:
@@ -501,21 +524,25 @@ func hasEnoughActionsLeft(type: String) -> bool:
 			if actionsToAttackWithSniper > gameManager.actions:
 				return false
 			return true
+		# end SNIPER match
 		'HARPOON':
 			if actionsToAttackWithHarpoon > gameManager.actions:
 				return false
 			return true
+		# end HARPOON match
 		'MOVE':
-			if actionsToMove > gameManager.actions:
+			if moveActionsAmount > gameManager.actions:
 				return false
 			return true
+		# end MOVE match
 		'MOVE_FROM_SWAMP':
-			if actionsToMoveFromSwamp > gameManager.actions:
+			if moveActionsAmount > gameManager.actions:
 				return false
 			return true
+		# end MOVE_FROM_SWAMP match
 		_: # default
 			return false 
-		# end CANNON match
+		# end _ match
 	# end match
 #end func hasEnoughActionsLeft
 
@@ -526,3 +553,35 @@ func hasCannonBalls() -> bool:
 func hasSniperBullets() -> bool:
 	return currentSniperBulletsAmount > 0
 #end func hasCannonBalls
+
+func isMovingInWindDirection() -> bool:
+	if gameManager.windDirection == currentMovingDirection:
+		return true
+
+	return false
+#end func isMovingInWindDirection
+
+func updateMovingDirection(turnDirection):
+	var currentMovingDirectionIndex = possibleWindDirections.find(currentMovingDirection)
+	var amount: int = 0
+	if turnDirection == 'left':
+		print('left')
+		amount = -1
+		if currentMovingDirectionIndex + amount < 0:
+			print('caso')
+			amount = possibleWindDirections.size()-1
+			currentMovingDirectionIndex = 0
+	else:
+		print('right')
+		amount = 1
+		if currentMovingDirectionIndex + amount > possibleWindDirections.size()-1:
+			print('caso')
+			amount = 0
+			currentMovingDirectionIndex = 0
+
+	currentMovingDirection = possibleWindDirections[currentMovingDirectionIndex + amount]
+	
+#	print('gameManager.possibleWindDirections', gameManager.possibleWindDirections)
+	print('currentMovingDirection', possibleWindDirections[currentMovingDirectionIndex + amount])
+	print('windDirection', gameManager.windDirection)
+#end func handleChangeMovingDirection

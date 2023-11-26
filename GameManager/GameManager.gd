@@ -6,9 +6,7 @@ extends Node2D
 ########## SIGNALS ##########
 signal startedPlayerTurn
 signal finishedPlayerTurn
-signal startedEnemyTurn
 signal finishedEnemyTurn
-signal enemyCanAct
 
 
 
@@ -18,12 +16,12 @@ signal enemyCanAct
 @onready var enemyIsland = get_node('./Islands/EnemyIsland')
 @onready var windRoseSprite: WindRose =  get_node('./CanvasLayer/HudManager/WindRoseContainer/WindRoseSprite')
 #@onready var desertIsland = preload("res://Islands/DesertIsland.tscn")
-#@onready var enemyIsland = preload("res://Islands/EnemyIsland.tscn")
+#@onready var enemyIsland = preload("res://Islands/EnemyIslahnd.tscn")
 
 @export var desertIslandAmount: int = 7
 @export var enemyIslandAmount: int = 4
-var windDirection = null
-var possibleWindDirections = [null, 'N', 'L', 'S', 'O']
+@export var windDirection = 'N'
+var possibleWindDirections = ['N', 'L', 'S', 'O']
 
 var isPlayerTurn = true
 var maxActions = 15
@@ -31,12 +29,14 @@ var actions = maxActions
 var islandEnemies: Dictionary = {}
 var islandEnemiesFinishedTurnAmount = 0
 var countPlayerTurns = 0
+var turnsToChangeWind = 1
 
 
 
 ########## FUNCS ##########
 func _ready():
-	var initialWindDirection = randi() % 6
+	var initialWindDirection = randi() % 4
+	print(initialWindDirection+1)
 	windDirection = possibleWindDirections[initialWindDirection]
 	windRoseSprite.changeFrame(windDirection)
 	
@@ -51,16 +51,6 @@ func _ready():
 #	finishedPlayerTurn.connect(controller)
 #	finishedEnemyTurn.connect(controller)
 #end func _ready
-
-#func _process(_delta):
-#	print(windDirection)
-func handlePlayerDecision() -> void:
-	print('-handlePlayerDecision')
-#end func handlePlayerDecision
-
-func handleIslandEnemies() -> void:
-	print('handleIslandEnemies')
-#end func handleIslandEnemies
 
 func controller(actionAmountToDecrease: int) -> void:
 #	print()
@@ -78,7 +68,6 @@ func controller(actionAmountToDecrease: int) -> void:
 			isPlayerTurn = false
 			actions = maxActions
 			finishedPlayerTurn.emit()
-			startedEnemyTurn.emit()
 			return
 		#end if
 	#end if
@@ -144,12 +133,13 @@ func countFinishedEnemyTurn():
 #end func countFinishedEnemyTurn
 
 func changeWindDirection():
-	if countPlayerTurns % 3 == 0:
+	if countPlayerTurns % turnsToChangeWind == 0:
 		var randomX = randi() % 2
 		var randomY = randi() % 2
 		var isXPositive = randi() % 2 == 1
 		var isYPositive = randi() % 2 == 1
 		
+		# if the random vector is (0,0) does not change wind direction
 		match Vector2i(randomX if isXPositive else -randomX, randomY if isYPositive else -randomY):
 			Vector2i(1,0):
 				windDirection = 'N'

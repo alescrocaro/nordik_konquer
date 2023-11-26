@@ -10,7 +10,6 @@ extends ProgressBar
 
 ########## FUNCS ##########
 func _ready():
-	print(player)
 	max_value = player.maxHealth
 	player.healthChanged.connect(update)
 	update()

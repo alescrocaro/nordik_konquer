@@ -27,10 +27,10 @@ func _pressed() -> void:
 			map.setAvailableSniperAttacks()
 		else:
 			myLOG.addLOG("NOT ENOUGHT ACTIONS")
-		#end ifelse
+		#end if
 	else:
 		myLOG.addLOG("OUT OF AMMO")
-	#end ifelse
+	#end if
 #end func _pressed
 
 func enableButton():

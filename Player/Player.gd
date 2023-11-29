@@ -89,11 +89,11 @@ func _process(_delta):
 		elif isAttackingWithSniper:
 			handleSniperAttack()
 		elif isAttackingWithHarpoon:
-			print('isAttackingWithHarpoon')
+#			print('isAttackingWithHarpoon')
 			handleHarpoonAttack()
 		else:
 			moveByMouseClick()
-		#end ifelifelse
+		#end ifelif
 	#end if
 #end func _process
 
@@ -153,12 +153,12 @@ func handleCannonAtack() -> void:
 				updateCannonBallsAmount()
 			else: # if clicking in anything that has not a reference, LOG shows the clicked tile type
 				myLOG.addLOG("SHOT " + enemyType)
-			#end ifelse
+			#end if
 			
 			attackWithCannon.emit(actionsToAttackWithCannon)
 		else:
 			myLOG.addLOG("SHOT " + enemyType + ' WITH CANNON ')
-		#end ifelse
+		#end if
 		enableButtons()
 		isAttackingWithCannon = false
 		map.cleanAttackTiles()
@@ -183,11 +183,11 @@ func handleSniperAttack() -> void:
 				updateSniperBulletsAmount()
 			else: # if clicking in anything that has not a reference, LOG shows the clicked tile type
 				myLOG.addLOG("SHOT " + enemyType) 
-			#end ifelse
+			#end if
 			attackWithSniper.emit(actionsToAttackWithSniper)
 		else:
 			myLOG.addLOG("CANNOT ATTACK " + enemyType + ' WITH SNIPER')
-		#end ifelse
+		#end if
 		
 		enableButtons()
 		isAttackingWithSniper = false
@@ -202,7 +202,8 @@ func handleHarpoonAttack() -> void:
 		canDoHarpoonAttack() &&
 		isAttackingWithHarpoon
 	):
-		if map.tileMapDict[ str(map.selectedGridPosition) ].type == 'Shark':
+		print('map.tileMapDict[ str(map.selectedGridPosition) ]', map.tileMapDict[ str(map.selectedGridPosition) ])
+		if map.tileMapDict[ str(map.selectedGridPosition) ].isSharkAt:
 			if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
 				if randi() % 100 <= 94: # has a 95% of chance of hitting target 
 					map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerHarpoonDamage)
@@ -210,12 +211,12 @@ func handleHarpoonAttack() -> void:
 					myLOG.addLOG("MISS") # if miss the shot, it is shown on LOG
 			else: # if clicking in anything that has not a reference, LOG shows the clicked tile type
 				myLOG.addLOG("SHOT " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper())
-			#end ifelse
+			#end if
 
 			attackWithHarpoon.emit(actionsToAttackWithHarpoon)
 		else:
 			myLOG.addLOG("CANNOT ATTACK " + map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper() + ' WITH HARPOON ')
-		#end ifelse
+		#end if
 
 		enableButtons()
 		isAttackingWithHarpoon = false
@@ -236,7 +237,7 @@ func updatePosition(tile):
 	changeFrame(tile, selectedGridTile)
 	currentTile = selectedGridTile
 	
-	print(tile)
+#	print(tile)
 
 	return selectedGridTile
 #end func updatePosition
@@ -258,8 +259,9 @@ func getSelectablePositionToMove():
 		if (
 			map.tileMapDict.has( str( currentTile.gridPosition - Vector2i(0,-1) ) ) &&
 			(
-				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Ocean' ||
-				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Swamp'
+				(map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Ocean' ||
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].type == 'Swamp') && 
+				!map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,-1)) ].isSharkAt
 			) &&
 			playerSprite.get_frame() == 0
 		):
@@ -268,8 +270,9 @@ func getSelectablePositionToMove():
 		if (
 			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(-1,0)) ) &&
 			(
-				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(-1,0)) ].type == 'Ocean' ||
-				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(-1,0)) ].type == 'Swamp'
+				(map.tileMapDict[ str(currentTile.gridPosition - Vector2i(-1,0)) ].type == 'Ocean' ||
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(-1,0)) ].type == 'Swamp') &&
+				!map.tileMapDict[ str(currentTile.gridPosition - Vector2i(-1,0)) ].isSharkAt
 			) &&
 			playerSprite.get_frame() == 1
 		):
@@ -278,8 +281,9 @@ func getSelectablePositionToMove():
 		if(
 			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(0,1)) ) &&
 			(
-				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,1)) ].type == 'Ocean' ||
-				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,1)) ].type == 'Swamp'
+				(map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,1)) ].type == 'Ocean' ||
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,1)) ].type == 'Swamp') &&
+				!map.tileMapDict[ str(currentTile.gridPosition - Vector2i(0,1)) ].isSharkAt
 			) &&
 			playerSprite.get_frame() == 2
 		):
@@ -288,8 +292,9 @@ func getSelectablePositionToMove():
 		if( 
 			map.tileMapDict.has( str(currentTile.gridPosition - Vector2i(1,0)) ) &&
 			(
-				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(1,0)) ].type == 'Ocean' ||
-				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(1,0)) ].type == 'Swamp'
+				(map.tileMapDict[ str(currentTile.gridPosition - Vector2i(1,0)) ].type == 'Ocean' ||
+				map.tileMapDict[ str(currentTile.gridPosition - Vector2i(1,0)) ].type == 'Swamp') &&
+				!map.tileMapDict[ str(currentTile.gridPosition - Vector2i(1,0)) ].isSharkAt
 			) &&
 			playerSprite.get_frame() == 3
 		):
@@ -306,8 +311,10 @@ func canSelectPositionToMove() -> bool:
 	):
 		var tile = map.tileMapDict[ str(map.selectedGridPosition) ]
 		if (
-			map.tileMapDict[ str(tile.gridPosition) ].type == 'Ocean' ||
-			map.tileMapDict[ str(tile.gridPosition) ].type == 'Swamp'
+			(
+				map.tileMapDict[ str(tile.gridPosition) ].type == 'Ocean' ||
+				map.tileMapDict[ str(tile.gridPosition) ].type == 'Swamp'
+			) && !map.tileMapDict[ str(tile.gridPosition) ].isSharkAt # MUDAR PARA HASOBSTACLE
 		):
 			if (
 				map.tileMapDict.has( str(tile.gridPosition - Vector2i(0,1)) ) && (
@@ -341,7 +348,7 @@ func hurtByEnemy(damageTaken) -> void:
 	else: 
 		currentHealth -= damageTaken
 		
-	print('currentHealth after damage: ', currentHealth)
+#	print('currentHealth after damage: ', currentHealth)
 	healthChanged.emit()
 #end func hurtByEnemy
 
@@ -475,7 +482,7 @@ func getAvailableHarpoonAttackTiles() -> PackedVector2Array: ##### TODO REFACTOR
 		availablePositions.append(currentTile.gridPosition - Vector2i(-1,0))
 
 
-	print('availablePositions', availablePositions)
+#	print('availablePositions', availablePositions)
 	return availablePositions
 #end func getAvailableHarpoonAttackTiles
 
@@ -565,23 +572,23 @@ func updateMovingDirection(turnDirection):
 	var currentMovingDirectionIndex = possibleWindDirections.find(currentMovingDirection)
 	var amount: int = 0
 	if turnDirection == 'left':
-		print('left')
+#		print('left')
 		amount = -1
 		if currentMovingDirectionIndex + amount < 0:
-			print('caso')
+#			print('caso')
 			amount = possibleWindDirections.size()-1
 			currentMovingDirectionIndex = 0
 	else:
-		print('right')
+#		print('right')
 		amount = 1
 		if currentMovingDirectionIndex + amount > possibleWindDirections.size()-1:
-			print('caso')
+#			print('caso')
 			amount = 0
 			currentMovingDirectionIndex = 0
 
 	currentMovingDirection = possibleWindDirections[currentMovingDirectionIndex + amount]
 	
 #	print('gameManager.possibleWindDirections', gameManager.possibleWindDirections)
-	print('currentMovingDirection', possibleWindDirections[currentMovingDirectionIndex + amount])
-	print('windDirection', gameManager.windDirection)
+#	print('currentMovingDirection', possibleWindDirections[currentMovingDirectionIndex + amount])
+#	print('windDirection', gameManager.windDirection)
 #end func handleChangeMovingDirection

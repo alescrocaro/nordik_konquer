@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://xwu7052q40t2" path="res://assets/cannon_balls.png" id="4_a4ufl"]
 [ext_resource type="Texture2D" uid="uid://b5xn7n5eo2nd1" path="res://assets/wind_rose.png" id="4_s1wba"]
 [ext_resource type="Texture2D" uid="uid://npfb47hvjsxh" path="res://assets/card_turn_to_right.png" id="5_3v2ww"]
-[ext_resource type="Script" path="res://WindRoseSprite.gd" id="5_bblci"]
+[ext_resource type="Script" path="res://uis/WindRoseSprite.gd" id="5_k2wsa"]
 [ext_resource type="Script" path="res://uis/LifeBar/HealthBar.gd" id="5_vy3pq"]
 [ext_resource type="Script" path="res://uis/CurrentCannonBallsAmount.gd" id="6_8ure4"]
 [ext_resource type="Texture2D" uid="uid://b6clclg03sj5l" path="res://assets/card_turn_to_left.png" id="6_hhyxh"]
@@ -99,9 +99,9 @@ layer_1/z_index = 0
 
 [node name="Enemies" type="Node2D" parent="."]
 
-[node name="Sharks" type="Node2D" parent="Enemies"]
-
 [node name="Pirates" type="Node2D" parent="Enemies"]
+
+[node name="Sharks" type="Node2D" parent="Enemies"]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -128,7 +128,7 @@ scale = Vector2(2, 2)
 skew = 0.698132
 texture = ExtResource("4_s1wba")
 hframes = 5
-script = ExtResource("5_bblci")
+script = ExtResource("5_k2wsa")
 
 [node name="CannonBallsContainer" type="Control" parent="CanvasLayer/HudManager"]
 layout_mode = 3

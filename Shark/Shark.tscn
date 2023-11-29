@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://cyigx0odtx1iu"]
+
+[ext_resource type="Script" path="res://Shark/Shark.gd" id="1_cmj5e"]
+[ext_resource type="Texture2D" uid="uid://d0c8ng1n2a7gu" path="res://assets/shark.png" id="2_2vu2x"]
+
+[node name="Sharks" type="Node2D"]
+script = ExtResource("1_cmj5e")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_2vu2x")
+hframes = 4

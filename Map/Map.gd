@@ -39,9 +39,11 @@ func _ready():
 				"gridPosition": Vector2i(x, y), 
 				"globalPosition": getGlobalPosition(Vector2i(x, y)), 
 				"isPlayerAt": false, 
+				"isSharkAt": false, 
 				"reference": null, 
 				"warningAmount": 0,
-				"canAct": false
+				"canAct": false,
+				"hasObstacle": false
 			}
 		#end for y
 	#end for x
@@ -76,7 +78,7 @@ func _process(_delta):
 				set_cell(warningLayer, Vector2i(x,y), warningSourceID, Vector2i(0, 0))
 			else: # if tile has no warningAmount, erase cell to turn it back into ocean
 				erase_cell(3, Vector2i(x,y))
-			#end ifelse
+			#end if
 		#end for y
 	#end for x
 
@@ -85,12 +87,14 @@ func _process(_delta):
 	):
 		var targetPosition = player.getSelectablePositionToMove()
 		if targetPosition:
+#			print('testeeeee', tileMapDict[str(targetPosition)])
 			if player.combatMode:
 				if tileMapDict[ str(targetPosition) ].warningAmount > 0:
 					set_cell(selectionLayer, targetPosition, selectionSourceID, Vector2i(0, 0))
 			else:
+#				print(targetPosition)
 				set_cell(selectionLayer, targetPosition, selectionSourceID, Vector2i(0, 0))
-			#end ifelse
+			#end if
 		#end if
 	#end if
 #end func _process
@@ -322,6 +326,7 @@ func generateEnemyIslands() -> void:
 			rangeToSpawn -= 1
 			if rangeToSpawn == 0:
 				break
+			#end if
 		#end if
 
 		var enemyIslandTile = getRandomTile()

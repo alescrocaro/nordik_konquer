@@ -47,12 +47,12 @@ func selfController():
 		actions -= 1
 		selfController()
 	else:
-		print('cant hurt player')
+#		print('cant hurt player')
 		myLOG.addLOG("ISLAND ENEMY FINISH TURN")
 		actions = maxActionsAmount
 		finishedTurn.emit()
 
-	#end ifelse
+	#end if
 #end func selfController
 
 
@@ -64,7 +64,7 @@ func _process(_delta):
 #end func _process
 
 func attackPlayer():
-	print('attacking player')
+#	print('attacking player')
 	player.hurtByEnemy(damage)
 #end func hurtPlayer
 
@@ -84,7 +84,7 @@ func tookHit(damageHit: float):
 #end func tookHit
 
 func isPlayerNear():
-	print('isPlayerNear: ', map.isNear(rangeAttack+1, 'Player', map.tileMapDict[ str(map.getGridPosition(global_position)) ]))
+#	print('isPlayerNear: ', map.isNear(rangeAttack+1, 'Player', map.tileMapDict[ str(map.getGridPosition(global_position)) ]))
 	return map.isNear(rangeAttack+1, 'Player', map.tileMapDict[ str(map.getGridPosition(global_position)) ])
 #end func checkIfIsPlayerNear
 

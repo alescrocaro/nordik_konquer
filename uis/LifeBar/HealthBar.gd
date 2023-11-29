@@ -29,6 +29,6 @@ func update():
 		var sb = StyleBoxFlat.new()
 		add_theme_stylebox_override("fill", sb)
 		sb.bg_color = Color("ff0d00")
-	#end ifelse
+	#end if
 #end func update
 

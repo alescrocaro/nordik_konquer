@@ -26,7 +26,7 @@ func _pressed() -> void:
 		map.setAvailableHarpoonAttacks()
 	else:
 		myLOG.addLOG("NOT ENOUGHT ACTIONS")
-	#end ifelse
+	#end if
 #end func _pressed
 
 func enableButton():

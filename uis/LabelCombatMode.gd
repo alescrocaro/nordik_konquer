@@ -17,5 +17,5 @@ func _process(_delta):
 	elif player.currentTile.warningAmount < 1 && visible:
 		visible = false
 		player.combatMode = false
-	#end ifelse
+	#end if
 #end func _process

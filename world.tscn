@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://tmjt5ytuo4dy"]
+[gd_scene load_steps=44 format=3 uid="uid://tmjt5ytuo4dy"]
 
 [ext_resource type="PackedScene" uid="uid://d1mfomqp1sk7t" path="res://Map/Map.tscn" id="1_a88kt"]
 [ext_resource type="Script" path="res://GameManager/GameManager.gd" id="1_r4irp"]
@@ -23,11 +23,17 @@
 [ext_resource type="Script" path="res://uis/FPS.gd" id="12_r72cf"]
 [ext_resource type="Script" path="res://uis/ButtonSniperAttack.gd" id="13_1csu5"]
 [ext_resource type="Script" path="res://uis/ButtonHarpoonAttack.gd" id="13_136m5"]
-[ext_resource type="Script" path="res://uis/Button.gd" id="13_gx0n7"]
+[ext_resource type="Texture2D" uid="uid://dl7yi5m6frbv1" path="res://assets/star.png" id="13_ikavg"]
+[ext_resource type="Script" path="res://ScoreLabel.gd" id="14_xnyln"]
 [ext_resource type="Script" path="res://uis/LabelCombatMode.gd" id="17_qe5fm"]
 [ext_resource type="Script" path="res://uis/LabelActionsAmount.gd" id="18_xnw5v"]
 [ext_resource type="Script" path="res://LOG.gd" id="23_4dj87"]
+[ext_resource type="Script" path="res://ButtonFullscreen.gd" id="25_af06t"]
 [ext_resource type="Script" path="res://uis/ButtonSkipTurn.gd" id="26_68hfo"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_f7frl"]
+font = ExtResource("3_5dxoa")
+font_size = 42
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_au1ld"]
 
@@ -71,9 +77,6 @@ content_margin_top = 0.0
 content_margin_right = 0.0
 content_margin_bottom = 0.0
 
-[sub_resource type="LabelSettings" id="LabelSettings_f7frl"]
-font = ExtResource("3_5dxoa")
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tqddb"]
 content_margin_left = 6.0
 content_margin_top = 6.0
@@ -86,6 +89,7 @@ corner_radius_bottom_right = 12
 corner_radius_bottom_left = 12
 
 [node name="GameManager" type="Node2D"]
+process_mode = 1
 script = ExtResource("1_r4irp")
 
 [node name="Map" parent="." instance=ExtResource("1_a88kt")]
@@ -212,6 +216,29 @@ size_flags_vertical = 4
 value = 100.0
 script = ExtResource("5_vy3pq")
 
+[node name="ScoreContainer" type="Control" parent="CanvasLayer/HudManager"]
+anchors_preset = 0
+offset_left = 4.0
+offset_top = 46.0
+offset_right = 44.0
+offset_bottom = 86.0
+
+[node name="TextureRect" type="TextureRect" parent="CanvasLayer/HudManager/ScoreContainer"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("13_ikavg")
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer/HudManager/ScoreContainer"]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 5.0
+offset_right = 182.0
+offset_bottom = 56.0
+text = "777"
+label_settings = SubResource("LabelSettings_f7frl")
+script = ExtResource("14_xnyln")
+
 [node name="HeaderMarginContainer" type="MarginContainer" parent="CanvasLayer/HudManager"]
 visible = false
 layout_mode = 1
@@ -318,29 +345,29 @@ script = ExtResource("13_1csu5")
 
 [node name="FPS" type="Label" parent="CanvasLayer/HudManager"]
 layout_mode = 0
-offset_left = 1818.0
+offset_left = 1729.0
 offset_top = 1013.0
 offset_right = 1858.0
-offset_bottom = 1039.0
+offset_bottom = 1056.0
 label_settings = SubResource("LabelSettings_f7frl")
 script = ExtResource("12_r72cf")
 
-[node name="ButtonQuit" type="Button" parent="CanvasLayer/HudManager"]
+[node name="ButtonFullscreen" type="Button" parent="CanvasLayer/HudManager"]
 layout_mode = 0
-offset_left = 1854.0
-offset_top = 12.0
+offset_left = 1776.0
+offset_top = 10.0
 offset_right = 1914.0
-offset_bottom = 43.0
-text = "Fechar"
-script = ExtResource("13_gx0n7")
+offset_bottom = 41.0
+text = "TELA CHEIA (F11)"
+script = ExtResource("25_af06t")
 
 [node name="LOGTITLE" type="Label" parent="CanvasLayer/HudManager"]
 clip_contents = true
 layout_mode = 0
-offset_left = 14.0
-offset_top = 92.0
-offset_right = 222.0
-offset_bottom = 110.0
+offset_left = 15.0
+offset_top = 125.0
+offset_right = 223.0
+offset_bottom = 143.0
 theme_override_fonts/font = ExtResource("3_5dxoa")
 text = "LOG"
 autowrap_mode = 2
@@ -352,9 +379,9 @@ uppercase = true
 clip_contents = true
 layout_mode = 0
 offset_left = 10.0
-offset_top = 112.0
+offset_top = 146.0
 offset_right = 226.0
-offset_bottom = 542.0
+offset_bottom = 576.0
 theme_override_fonts/font = ExtResource("3_5dxoa")
 theme_override_styles/normal = SubResource("StyleBoxFlat_tqddb")
 autowrap_mode = 2
@@ -367,7 +394,7 @@ script = ExtResource("23_4dj87")
 layout_mode = 0
 offset_left = 531.0
 offset_top = 29.0
-offset_right = 1438.0
+offset_right = 1340.0
 offset_bottom = 198.0
 theme_override_fonts/font = ExtResource("3_5dxoa")
 theme_override_font_sizes/font_size = 128
@@ -396,3 +423,5 @@ size_flags_vertical = 0
 theme_override_fonts/font = ExtResource("3_5dxoa")
 text = "SKIP"
 script = ExtResource("26_68hfo")
+
+[connection signal="toggled" from="CanvasLayer/HudManager/ButtonFullscreen" to="CanvasLayer/HudManager/ButtonFullscreen" method="_on_toggled"]

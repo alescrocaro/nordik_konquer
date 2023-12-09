@@ -18,6 +18,8 @@ extends Node2D
 @export var maxActionsAmount: int = 2
 @export var actions: int = maxActionsAmount
 
+signal died
+
 
 
 ######### FUNCS #########
@@ -57,6 +59,7 @@ func _process(_delta):
 #	hurtPlayer()'
 	if currentHealth <= 0:
 		destroyYourself()
+		died.emit()
 	#end if
 #end func _process
 
@@ -69,6 +72,7 @@ func destroyYourself():
 	map.tileMapDict[ str(currentGridPosition) ].isSharkAt = false
 	map.tileMapDict[ str(currentGridPosition) ].reference = null
 	gameManager.sharksAlive = -3 # give player 3 rounds with no chance to spawn shark
+	player.updateScore(1)
 
 	queue_free()
 #end func destroyYourself

@@ -20,7 +20,7 @@ signal finishedTurn
 
 @export var maxHealth: float = 30
 @export var rangeAttack: int = 2
-@export var damage: int = 10
+@export var damage: int = 4
 @export var maxActionsAmount: int = 3
 @export var actions: int = maxActionsAmount
 
@@ -40,14 +40,16 @@ func selfController():
 	if actions < 1:
 		finishedTurn.emit()
 		actions = maxActionsAmount
+		print('selfController- finished turn')
 		return
 	if isPlayerNear():
+		print('selfController- isPlayerNear')
 		attackPlayer()
 		myLOG.addLOG("ISLAND ENEMY ATTACKED")
 		actions -= 1
 		selfController()
 	else:
-#		print('cant hurt player')
+		print('cant hurt player')
 		myLOG.addLOG("ISLAND ENEMY FINISH TURN")
 		actions = maxActionsAmount
 		finishedTurn.emit()
@@ -75,6 +77,9 @@ func destroyYourself():
 	map.tileMapDict[ str(currentGridPosition) ].reference = null
 	map.removeWarningTiles(currentGridPosition, rangeAttack)
 
+#	map.updateIslandEnemyAmount(-1)
+	player.updateScore(5)
+
 	queue_free()
 #end func destroyYourself
 
@@ -87,6 +92,4 @@ func isPlayerNear():
 #	print('isPlayerNear: ', map.isNear(rangeAttack+1, 'Player', map.tileMapDict[ str(map.getGridPosition(global_position)) ]))
 	return map.isNear(rangeAttack+1, 'Player', map.tileMapDict[ str(map.getGridPosition(global_position)) ])
 #end func checkIfIsPlayerNear
-
-
 

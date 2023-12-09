@@ -28,10 +28,11 @@ var islandEnemiesFinishedTurnAmount = 0
 var countPlayerTurns = 0
 var turnsToChangeWind = 1
 var sharksAlive: int = -1
-var chanceOfSpawnShark: float = 100
+var chanceOfSpawnShark: float = 4
 var sharkInstance: Shark = null
 
 const sharkAmount: int = 1
+
 
 
 ########## FUNCS ##########
@@ -42,6 +43,7 @@ func _ready():
 	windRoseSprite.changeFrame(windDirection)
 	
 	startedPlayerTurn.emit()
+	player.died.connect(handleGameOver)
 	player.doAction.connect(controller, 1)
 	player.attackWithCannon.connect(controller, 1)
 	player.attackWithSniper.connect(controller, 1)
@@ -52,6 +54,11 @@ func _ready():
 #	finishedPlayerTurn.connect(controller)
 #	finishedEnemyTurn.connect(controller)
 #end func _ready
+
+func _process(_delta):
+	if (!islandEnemies.size()):
+		get_tree().change_scene_to_file("res://uis/Win/win.tscn")
+#end func _process
 
 func controller(actionAmountToDecrease: int) -> void:
 #	print()
@@ -72,7 +79,7 @@ func controller(actionAmountToDecrease: int) -> void:
 		else:
 			if sharksAlive < 1: #% of chance of generate an shark
 				if sharksAlive == 0: # sharksAlive -> gambiarra pra nao gerar o tubarao assim que ele morrer
-					if randi() % 100 < 100:
+					if randi() % 100 < 5:
 						generateShark()
 					#end if
 				#end if
@@ -188,5 +195,10 @@ func addPossibleSharkPositionsToArray():
 
 	return positions
 #end func addPossibleSharkPositionsToArray
+
+func handleGameOver():
+	get_tree().reload_current_scene()
+	get_tree().change_scene_to_file('res://uis/GameOver/gameOver.tscn')
+#end func handleGameOver
 
 

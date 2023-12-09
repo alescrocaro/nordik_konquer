@@ -4,8 +4,10 @@ extends Node2D
 
 
 ########## SIGNALS ##########
-signal healthChanged
+signal died
 signal doAction
+signal scoreChanged
+signal healthChanged
 signal attackWithCannon
 signal attackWithSniper
 signal attackWithHarpoon
@@ -13,15 +15,15 @@ signal attackWithHarpoon
 
 
 ########## VARS ##########
-@onready var gameManager: GameManager = get_node('/root/GameManager')
-@onready var map: Map = get_node('/root/GameManager/Map')
 @onready var playerSprite: Sprite2D = $"playerSprite"
-@onready var skipTurnButton: ButtonSkipTurn = get_node('/root/GameManager/CanvasLayer/HudManager/ButtonSkipTurn')
+@onready var map: Map = get_node('/root/GameManager/Map')
+@onready var gameManager: GameManager = get_node('/root/GameManager')
 @onready var myLOG: LOG = get_node('/root/GameManager/CanvasLayer/HudManager/LOG')
+@onready var skipTurnButton: ButtonSkipTurn = get_node('/root/GameManager/CanvasLayer/HudManager/ButtonSkipTurn')
 @onready var cannonAttackButton: CannonAttackButton = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/ButtonCannonAttack')
 @onready var sniperAttackButton: SniperAttackButton = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/ButtonSniperAttack')
-@onready var harpoonAttackButton: HarpoonAttackButton = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/ButtonHarpoonAttack')
 @onready var buttonTurnLeft: ButtonTurnLeft = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/TurnContainer/ButtonTurnLeft')
+@onready var harpoonAttackButton: HarpoonAttackButton = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/ButtonHarpoonAttack')
 @onready var buttonTurnRight: ButtonTurnRight = get_node('/root/GameManager/CanvasLayer/HudManager/FooterMarginContainer/CardsContainer/TurnContainer/ButtonTurnRight')
 @onready var currentCannonBallsAmountLabel: CurrentCannonBallsAmount = get_node('/root/GameManager/CanvasLayer/HudManager/CannonBallsContainer/CurrentCannonBallsAmount')
 @onready var currentSniperBulletsAmountLabel: CurrentSniperBulletsAmount = get_node('/root/GameManager/CanvasLayer/HudManager/SniperBulletsContainer/CurrentSniperBulletsAmount')
@@ -31,14 +33,14 @@ signal attackWithHarpoon
 @onready var isAttackingWithSniper: bool = false
 @onready var isAttackingWithHarpoon: bool = false
 
-@export var playerCannonDamage: int = 20 
+@export var playerCannonDamage: int = 20
 @export var playerSniperDamage: int = 30
 @export var playerHarpoonDamage: int = 10
-@export var maxCannonBallsAmount: int = 10
-@export var currentCannonBallsAmount: int = 10
-@export var maxSniperBulletsAmount: int = 3
-@export var currentSniperBulletsAmount: int = 3
-@export var maxHealth: float = 100 
+@export var maxCannonBallsAmount: int = 30
+@export var currentCannonBallsAmount: int = 30
+@export var maxSniperBulletsAmount: int = 5
+@export var currentSniperBulletsAmount: int = 5
+@export var maxHealth: float = 100
 
 var currentTile
 var currentMovingDirection = 'N'
@@ -49,10 +51,10 @@ var spriteFrames = [0, 1, 2, 3]
 var actionsToMove = 1
 var actionsToMoveFromSwamp = 2
 var actionsToAttackWithCannon = 2
-var actionsToAttackWithSniper = 4
+var actionsToAttackWithSniper = 5
 var actionsToAttackWithHarpoon = 2
 var possibleWindDirections
-
+var score = 0
 
 
 ######### FUNCS #########
@@ -78,7 +80,6 @@ func _ready():
 			break
 		#end if
 	#end while
-
 	#print(tileMapDict[ str(tileMapDict.keys()[ randi() % tileMapDict.size() ] ) ] )
 #end func _ready
 
@@ -93,7 +94,7 @@ func _process(_delta):
 			handleHarpoonAttack()
 		else:
 			moveByMouseClick()
-		#end ifelif
+		#end 
 	#end if
 #end func _process
 
@@ -342,14 +343,16 @@ func canSelectPositionToMove() -> bool:
 	return false
 #end func canSelectPositionToMove
 
-func hurtByEnemy(damageTaken) -> void:
-	if (currentHealth - damageTaken) < 0:
+func hurtByEnemy(damageTaken: int) -> void:
+	if (currentHealth - damageTaken) <= 0:
 		currentHealth = 0
+		died.emit()
 	else: 
+		updateScore(-1)
 		currentHealth -= damageTaken
+		healthChanged.emit()
 		
 #	print('currentHealth after damage: ', currentHealth)
-	healthChanged.emit()
 #end func hurtByEnemy
 
 func heal(amount) -> void:
@@ -587,8 +590,14 @@ func updateMovingDirection(turnDirection):
 			currentMovingDirectionIndex = 0
 
 	currentMovingDirection = possibleWindDirections[currentMovingDirectionIndex + amount]
-	
+#end func updateMovingDirection
+
 #	print('gameManager.possibleWindDirections', gameManager.possibleWindDirections)
 #	print('currentMovingDirection', possibleWindDirections[currentMovingDirectionIndex + amount])
 #	print('windDirection', gameManager.windDirection)
 #end func handleChangeMovingDirection
+
+func updateScore(scoreToAdd: int) -> void:
+	score += scoreToAdd
+	scoreChanged.emit()
+#end func updateScore

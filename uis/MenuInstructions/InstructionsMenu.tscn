@@ -1,0 +1,173 @@
+[gd_scene load_steps=7 format=3 uid="uid://ceftayy6luotx"]
+
+[ext_resource type="Script" path="res://uis/MenuInstructions/InstructionsMenu.gd" id="1_k1j4n"]
+[ext_resource type="FontFile" uid="uid://7lq4ug78jinv" path="res://assets/nordicfont/Tundra.ttf" id="1_uigyc"]
+[ext_resource type="Script" path="res://ButtonFullscreen.gd" id="3_ss68m"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_6d5op"]
+font = ExtResource("1_uigyc")
+font_size = 64
+
+[sub_resource type="LabelSettings" id="LabelSettings_aqa5e"]
+font = ExtResource("1_uigyc")
+font_size = 48
+
+[sub_resource type="LabelSettings" id="LabelSettings_m3prj"]
+font = ExtResource("1_uigyc")
+font_size = 24
+
+[node name="InstructionsMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_k1j4n")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.392157, 0, 0.956863, 1)
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -960.0
+offset_top = 128.0
+offset_right = 960.0
+offset_bottom = 218.0
+grow_horizontal = 2
+text = "NORDIK KONQUER"
+label_settings = SubResource("LabelSettings_6d5op")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Title2" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -960.0
+offset_top = 216.0
+offset_right = 960.0
+offset_bottom = 306.0
+grow_horizontal = 2
+text = "INSTRUCOES"
+label_settings = SubResource("LabelSettings_aqa5e")
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 0
+offset_left = 128.0
+offset_top = 128.0
+offset_right = 216.0
+offset_bottom = 159.0
+text = "<- VOLTAR"
+
+[node name="UTFPR" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -968.0
+offset_top = -192.0
+offset_right = 952.0
+offset_bottom = -166.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_fonts/font = ExtResource("1_uigyc")
+theme_override_font_sizes/font_size = 18
+text = "UTFPR 2023"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="mission" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -896.0
+offset_top = 320.0
+offset_right = -320.0
+offset_bottom = 384.0
+grow_horizontal = 2
+text = "OBJETIVO:
+        CONSEGUIR A MAIOR PONTUACAO POSSIVEL"
+label_settings = SubResource("LabelSettings_m3prj")
+autowrap_mode = 2
+
+[node name="howToPlay" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -896.0
+offset_top = 384.0
+offset_right = -192.0
+offset_bottom = 416.0
+grow_horizontal = 2
+text = "COMO JOGAR:"
+label_settings = SubResource("LabelSettings_m3prj")
+autowrap_mode = 2
+
+[node name="movements" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -256.0
+offset_top = 320.0
+offset_right = 288.0
+offset_bottom = 563.0
+grow_horizontal = 2
+text = "    - MOVIMENTACAO:
+        - NAVEGAR:
+            - ACOES:
+              1 - A FAVOR DO VENTO E NA AGUA
+              2 - EM PANTANO
+              X2 - SE NAO ESTÁ A FAVOR DO VENTO
+            - NAVEGA 1 BLOCO POR JOGADA, CLICANDO NOS BLOCOS EM SUA VOLTA
+        - "
+label_settings = SubResource("LabelSettings_m3prj")
+autowrap_mode = 2
+
+[node name="actions" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -896.0
+offset_top = 408.0
+offset_right = -320.0
+offset_bottom = 725.0
+grow_horizontal = 2
+text = "    - TURNOS:
+        - O JOGO É BASEADO EM TURNOS. O JOGADOR POSSUI SEU TURNO, ASSIM COMO OS INIMIGOS
+        - O JOGADOR POSSUI 15 ACOES PARA GASTAR A CADA TURNO
+        - A ILHA COM CANHAO POSSUI 3 ACOES POR TURNO
+        - O TUBARAO SEGUE O JOGADOR E O ATACA A CADA ACAO FEITA PELO JOGADOR (MESMO QUE O MOVIMENTO GASTE 2 ACOES, O TUBARAO ATACA APENAS 1 VEZ)"
+label_settings = SubResource("LabelSettings_m3prj")
+autowrap_mode = 2
+
+[node name="ButtonFullscreen" type="Button" parent="."]
+offset_left = 1776.0
+offset_top = 10.0
+offset_right = 1914.0
+offset_bottom = 41.0
+text = "TELA CHEIA (F11)"
+script = ExtResource("3_ss68m")
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="toggled" from="ButtonFullscreen" to="ButtonFullscreen" method="_on_toggled"]

@@ -8,10 +8,9 @@ extends TileMap
 @onready var enemyIsland = preload("res://Islands/EnemyIsland.tscn")
 
 @export var desertIslandAmount: int = 7
-@export var enemyIslandAmount: int = 8
 @export var swampAmount: int = 9
 
-var gridSize = 30
+var gridSize = 40
 var tileMapDict: Dictionary = {}
 var selectedGlobalPosition: Vector2i
 var selectedGridPosition: Vector2i
@@ -26,6 +25,9 @@ var enemyIslandSourceID: int = 3
 var attackSelectionSourceID: int = 4
 var warningSourceID: int = 5
 var swampSourceID: int = 6
+
+var currentIslandEnemyAmount: int = 0
+var initialMaxIslandEnemyAmount: int = 10
 
 
 
@@ -49,13 +51,14 @@ func _ready():
 	#end for x
 	generateSwamp()
 	generateDesertIslands()
-	generateEnemyIslands()
+	generateEnemyIslands(initialMaxIslandEnemyAmount)
 #end func _ready
 
 func _process(_delta):
 	selectedGridPosition = getGridPosition(get_global_mouse_position() + Vector2(0, 8)) # Used "+ Vector2(0, 8)" because the map is isometric, so the selection area is different for the tilemap
 	selectedGlobalPosition = getGlobalPosition(selectedGridPosition)
 #	print('selected: ', selectedGridPosition)
+#	if (currentIslandEnemyAmount < 2): generateEnemyIslands((randi() % 5) + 1)
 		
 #	if (
 #		!selectedGridPosition.x < 0 &&
@@ -310,13 +313,16 @@ func generateDesertIslands() -> void:
 	#end while
 #end func generateDesertIslands
 
-func generateEnemyIslands() -> void:
+func generateEnemyIslands(enemyIslandAmount: int) -> void:
 	var enemyIslandCount: int = 0
 	var enemyIslandCountIterations: int = 0
 	var rangeToSpawn: int = 3 
 
 	while true:
+		print('while')
 		if enemyIslandCount >= enemyIslandAmount:
+			print('break')
+			print(tileMapDict)
 			break
 		#end if
 
@@ -325,6 +331,7 @@ func generateEnemyIslands() -> void:
 			enemyIslandCountIterations = 0
 			rangeToSpawn -= 1
 			if rangeToSpawn == 0:
+				print('too many iters')
 				break
 			#end if
 		#end if
@@ -341,12 +348,15 @@ func generateEnemyIslands() -> void:
 
 		#instantiate node if found a good ocean tile
 		if tileMapDict[str(enemyIslandTile.gridPosition)].type == 'Ocean':
+			print('generated')
 			enemyIslandCount += 1
 
 			var enemyIslandInstance: EnemyIsland = enemyIsland.instantiate()
 			tileMapDict[str(enemyIslandTile.gridPosition)].type = 'EnemyIsland'
 			tileMapDict[str(enemyIslandTile.gridPosition)].reference = enemyIslandInstance
 			enemyIslandInstance.position = enemyIslandTile.globalPosition
+			
+#			updateIslandEnemyAmount(1)
 
 			gameManager.islandEnemies[ str(enemyIslandTile.gridPosition) ] = tileMapDict[ str(enemyIslandTile.gridPosition) ]
 			setWarningTiles(enemyIslandTile.gridPosition, 2)
@@ -436,3 +446,8 @@ func getRandomTileNear(tile, rangeToFind):
 	
 	return null
 #end func getRandomTileNear
+
+
+func updateIslandEnemyAmount(valueToUpdate: int) -> void:
+	currentIslandEnemyAmount += valueToUpdate
+#end func updateEnemyAmount

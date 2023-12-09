@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cwbspgjwpedi8"]
+[gd_scene load_steps=7 format=3 uid="uid://cwbspgjwpedi8"]
 
 [ext_resource type="Script" path="res://uis/GameOver/gameOver.gd" id="1_76q4u"]
 [ext_resource type="FontFile" uid="uid://7lq4ug78jinv" path="res://assets/nordicfont/Tundra.ttf" id="2_6e5td"]
 [ext_resource type="Script" path="res://ButtonFullscreen.gd" id="3_sj6gt"]
+[ext_resource type="AudioStream" uid="uid://k3wbpedh26cq" path="res://assets/sound/epic-pirate-song-studiokolomna.mp3" id="4_uu4q2"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_6d5op"]
 font = ExtResource("2_6e5td")
@@ -117,6 +118,11 @@ layout_mode = 2
 theme_override_fonts/font = ExtResource("2_6e5td")
 theme_override_font_sizes/font_size = 24
 text = "VOLTAR AO INICIO"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("4_uu4q2")
+volume_db = -20.0
+autoplay = true
 
 [connection signal="toggled" from="ButtonFullscreen" to="ButtonFullscreen" method="_on_toggled" flags=18]
 [connection signal="pressed" from="VBoxContainer/Restart" to="." method="_on_restart_pressed" flags=18]

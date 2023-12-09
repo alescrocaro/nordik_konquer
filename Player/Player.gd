@@ -84,6 +84,9 @@ func _ready():
 #end func _ready
 
 func _process(_delta):
+	if !hasAttackResources():
+		died.emit()
+	#end if
 	if gameManager.isPlayerTurn:
 		if isAttackingWithCannon:
 			handleCannonAtack()
@@ -174,9 +177,9 @@ func handleSniperAttack() -> void:
 		isAttackingWithSniper
 	):
 		var enemyType = map.tileMapDict[ str(map.selectedGridPosition) ].type.to_upper()
-		if enemyType == 'SHIP':
+		if enemyType == 'SHARK' || enemyType == 'ENEMYISLAND':
 			if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
-				if randi() % 100 <= 19: # has a 20% of chance of hitting target 
+				if randi() % 100 <= 14: # has a 15% of chance of hitting target 
 					myLOG.addLOG("SHOT " + enemyType + " WITH SNIPER")
 					map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerSniperDamage)
 				else:
@@ -206,7 +209,7 @@ func handleHarpoonAttack() -> void:
 		print('map.tileMapDict[ str(map.selectedGridPosition) ]', map.tileMapDict[ str(map.selectedGridPosition) ])
 		if map.tileMapDict[ str(map.selectedGridPosition) ].isSharkAt:
 			if map.tileMapDict[ str(map.selectedGridPosition) ].reference:
-				if randi() % 100 <= 94: # has a 95% of chance of hitting target 
+				if randi() % 100 <= 89: # has a 95% of chance of hitting target 
 					map.tileMapDict[ str(map.selectedGridPosition) ].reference.tookHit(playerHarpoonDamage)
 				else:
 					myLOG.addLOG("MISS") # if miss the shot, it is shown on LOG
@@ -601,3 +604,7 @@ func updateScore(scoreToAdd: int) -> void:
 	score += scoreToAdd
 	scoreChanged.emit()
 #end func updateScore
+
+func hasAttackResources():
+	return (currentCannonBallsAmount + currentSniperBulletsAmount) > 0 
+#end func hasAttackResources

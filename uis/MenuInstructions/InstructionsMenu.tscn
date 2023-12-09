@@ -100,11 +100,11 @@ anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -896.0
 offset_top = 320.0
-offset_right = -320.0
+offset_right = -288.0
 offset_bottom = 384.0
 grow_horizontal = 2
 text = "OBJETIVO:
-        CONSEGUIR A MAIOR PONTUACAO POSSIVEL"
+        DERROTAR TODAS AS ILHAS INIMIGAS (COM CANHAO)"
 label_settings = SubResource("LabelSettings_m3prj")
 autowrap_mode = 2
 
@@ -114,9 +114,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -896.0
-offset_top = 384.0
+offset_top = 400.0
 offset_right = -192.0
-offset_bottom = 416.0
+offset_bottom = 432.0
 grow_horizontal = 2
 text = "COMO JOGAR:"
 label_settings = SubResource("LabelSettings_m3prj")
@@ -130,7 +130,7 @@ anchor_right = 0.5
 offset_left = -256.0
 offset_top = 320.0
 offset_right = 288.0
-offset_bottom = 563.0
+offset_bottom = 617.0
 grow_horizontal = 2
 text = "    - MOVIMENTACAO:
         - NAVEGAR:
@@ -139,7 +139,63 @@ text = "    - MOVIMENTACAO:
               2 - EM PANTANO
               X2 - SE NAO ESTÁ A FAVOR DO VENTO
             - NAVEGA 1 BLOCO POR JOGADA, CLICANDO NOS BLOCOS EM SUA VOLTA
-        - "
+        - GIRAR
+            - 1 ACAO
+            -  GIRA PARA 1 DOS LADOS"
+label_settings = SubResource("LabelSettings_m3prj")
+autowrap_mode = 2
+
+[node name="movements" type="Label" parent="movements"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -272.0
+offset_top = 312.0
+offset_right = 272.0
+offset_bottom = 474.0
+grow_horizontal = 2
+text = "    - RECURSOS:
+        - O BARCO POSSUI:
+            - 30 BALAS DE CANHAO
+            - INFINITOS HARPOES
+            - 5 BALAS DE SNIPER 
+        "
+label_settings = SubResource("LabelSettings_m3prj")
+autowrap_mode = 2
+
+[node name="movements" type="Label" parent="movements/movements"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 304.0
+offset_top = -312.0
+offset_right = 848.0
+offset_bottom = -150.0
+grow_horizontal = 2
+text = "    - SORTE:
+        - CADA ACAO DE ATAQUE POSSUI UMA PROBABILIDADE PREDEFINIDA DE SUCESSO OU FALHA"
+label_settings = SubResource("LabelSettings_m3prj")
+autowrap_mode = 2
+
+[node name="movements" type="Label" parent="movements/movements/movements"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -272.0
+offset_top = 136.0
+offset_right = 272.0
+offset_bottom = 298.0
+grow_horizontal = 2
+text = "    - ATAQUES:
+        - CANHAO:
+            - ILHA CANHAO.
+        - HARPAO:
+            - TUBARAO.
+        - SNIPER:
+            - ILHA CANHAO; TUBARAO."
 label_settings = SubResource("LabelSettings_m3prj")
 autowrap_mode = 2
 
@@ -149,9 +205,9 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -896.0
-offset_top = 408.0
+offset_top = 424.0
 offset_right = -320.0
-offset_bottom = 725.0
+offset_bottom = 741.0
 grow_horizontal = 2
 text = "    - TURNOS:
         - O JOGO É BASEADO EM TURNOS. O JOGADOR POSSUI SEU TURNO, ASSIM COMO OS INIMIGOS

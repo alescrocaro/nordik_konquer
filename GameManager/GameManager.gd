@@ -79,7 +79,7 @@ func controller(actionAmountToDecrease: int) -> void:
 		else:
 			if sharksAlive < 1: #% of chance of generate an shark
 				if sharksAlive == 0: # sharksAlive -> gambiarra pra nao gerar o tubarao assim que ele morrer
-					if randi() % 100 < 5:
+					if randi() % 100 < 4:
 						generateShark()
 					#end if
 				#end if
